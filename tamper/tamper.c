@@ -1,3 +1,20 @@
+/*
+ * tamper.c
+ * ---------------
+ * tamper initialization and execution loop.
+ *
+ * Copyright © 2018, 2019 Diamond Key Security, NFP
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License only.
+ * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, If not, see <https://www.gnu.org/licenses/>.*/
+
 /* Copyright (c) 2016, NORDUnet A/S. */
 /*
 
@@ -25,38 +42,8 @@ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 
-Copyright (c) 2018, Diamond Key Security, NFP. 
-
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-- Redistributions of source code must retain the above copyright notice,
-this list of conditions and the following disclaimer.
-
-- Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
-
-- Neither the name of the Diamond Key Security nor the names of its
-contributors maybe used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
 
 #include <inttypes.h>
 #include <avr/io.h> /* -D__AVR_ATtiny828__ will include <avr/iotn828.h> */
@@ -68,6 +55,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "accel.h"
 #include "ssp.h"
 #include "timer.h"
+#include "n25.h"
 
 /* Mapping of pins to names. */
 #define MKM_AVR_CS_N PORTA5
@@ -292,7 +280,7 @@ ISR (INT0_vect)
 #endif
 
 /* Tamper reset. */
-#if 1
+#if 0
 /* Interrupt handler for tamper reset */
 ISR (PCINT2_vect)
 {
@@ -316,11 +304,19 @@ ISR (PCINT1_vect)
 		b.) we have a 10 bit timeout
 	2. reload bit counter
 	3. set timer A0 for a half-bit timer*/
-	PCMSK1 &= ~_BV(PCINT10);
+	//PCMSK1 &= ~_BV(PCINT10); //was
+	TCNT0 = 0x00;
+	PCMSK1 &= ~_BV(PCINT11);
+	//PCICR &= ~_BV(PCIE1);
+	//PCIFR |= _BV(PCIF1);
 	start_bit = 1;
-	bit_count = 8;   // TBD 7 or 8? look for the stop bit?
+	rcv_bit_count = 9;   // TBD 7 or 8? look for the stop bit?
 	rcv_char = 0x00; //flush receive buffer
-	initTimer1(HALF_BIT);
+	receiving = 1;
+	//OCR0A = 208;						// 208us compare value for 4800 baud
+	
+	TIMSK0 |= (1<<OCIE0A);              //if you want interrupt
+	//PORTC ^= _BV(PORTC6);
 }
 #endif
 
@@ -336,8 +332,9 @@ init_ports()
   /* Configure all PORTA pins except the tamper detection pin as
      outputs. */
   DDRA = 0xff & ~_BV(AVR_PANIC_BIT);
-  DDRB = 0xff & ~_BV(PINB3);
-  DDRB = 0xff & ~_BV(PINB2);
+  //DDRB = 0xff & ~_BV(PINB3);
+  //DDRB = 0xff & ~_BV(PINB2);
+	DDRB = 0xf7; //was fb
 }
 
 static void
@@ -347,12 +344,14 @@ init_interrupts()
   PCICR = (1<<PCIE0)|(1<<PCIE1)|(1<<PCIE2);
   PCMSK0 |= _BV(PCINT4);        /* Set mask bit for PCINT4 (panic) */
   /*setup PC6 as tamper disable */
-  PUEC = (1<<PUEC6);			/*enable internal pull-up to avoid false triggers */
-  PCMSK2 |= _BV(PCINT22);
+  //PUEC = (1<<PUEC6);			/*enable internal pull-up to avoid false triggers */ 
+  PORTC |= (1<<PORTC6);
+  //PCMSK2 |= _BV(PCINT22);
   /*setup PB2 as soft-UART RX*/
-  PUEB = (1<<PUEB3) | (1<<PUEB2);			/*enable internal pull-up to detect start bit */
+  //PUEB = (1<<PUEB3) | (1<<PUEB2);			/*enable internal pull-up to detect start bit */
+  PUEB = (1<<PUEB3);
   PCMSK1 |= _BV(PCINT11);
-  PCMSK1 |= _BV(PCINT10);
+ // PCMSK1 |= _BV(PCINT10);
   sei();
 }
 
@@ -373,7 +372,7 @@ init_power_reduction()
   /* TBD: Disable everything that we don't need? Note that the effect
      of this should marginal since it's only saving energy when we're
      awaken and actualy wiping memory. */
-  //MAD not sure what the original devloper meant by this.
+  //MAD not sure what the original developer meant by this.
 }
 
 /*static inline*/ void
@@ -428,9 +427,27 @@ main()
   init_power_reduction();
   init_interrupts();
   uint8_t ssp_status = 0;
+  sending = 0;
+  receiving = 0;
+  tx_char = 0;
+  tx_bit_count = 0;
+  PORTB |= _BV(PORTB3);   //set TX idle high
   wd_init = 0x01;
   ssp_out = WDOG_RS;
-  
+  PORTC |= _BV(PORTC6);
+  TCNT0 = 0x00;
+  TCCR0A = (1<<COM0A1) | (1 << WGM01);             //CTC mode
+  TCCR0B = (1 << CS00);              //div1
+  OCR0A = 180;						// 208us compare value for 4800 baud
+  rcv[0]= 0xff;
+  rcv[1] = 0x02;
+  rcv[2] = 0x03;
+  rcv[3] = 0x04;
+  rcv[4] = 0x05;
+  rcv[5]= 0x06;
+  rcv[6] = 0x07;
+  rcv[7] = 0x08;
+  rcv[8]= 0x09;
   spi_usart_setup(1);
   //put mlx to sleep as soon as possible to avoid wdog reset
  /* mlx_reset();
@@ -453,9 +470,9 @@ main()
   ssp_write(ssp_out|0x02);
   ssp_write(ssp_out);
   //setup the tamper monitoring input
-  ssp_int_config();
+  //ssp_int_config();
  uint8_t check =  ssp_read_byte();
-  init_int0();
+  //init_int0();
   mlx_sleep();
   /* do not need to configure these for tamper switch only
   adx_setup();
@@ -475,9 +492,20 @@ main()
   sei();
   while (1)
     {
+		//n25_read(0x00, 0x00, 0x00, 8);
+		//read in character and echo back
 		if (rcv_valid ==1){
-			volatile int stop = 0;
+			rcv_valid = 0;
+			start_bit = 1;
+			tx_char = rcv_char;
+			tx_bit_count = 0;
+			sending = 1;
+			TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
+			TIMSK0 |= (1<<OCIE0A);		        /if you want interrupt
 		}
+		
+		
+		
       /*read the ssp lines for events */
 	  //ssp_status = ssp_read_byte();
 	  //if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
@@ -501,12 +529,35 @@ main()
 
       /* Sleep is not working right at the moment (the AVR seems to be reset
 	 when brought out of sleep mode by a press on the panic button).
-	MAD 11/29/18 -Because the sleep power mode did not catch PCINTx type interupts
+	MAD 11/29/18 -Because the sleep power mode did not catch PCINTx type interrupts
 	 if (!panic_p())
 	   sleep();
       */
     }
 
   return 0;
+}
+
+void process_message(){
+	if (rcv_char == SET_LIGHT) {
+		rcv_valid = 0;
+		while (!rcv_valid & !rcv_error_stop){
+			light = (uint16_t)rcv_char <<8;
+			TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
+			TIMSK0 |= (1<<OCIE0A);		        /if you want interrupt
+		}
+		if (rcv_error_stop) {
+			light_status = 0;
+		}
+		rcv_valid = 0;
+		while (!rcv_valid & !rcv_error_stop){
+			light |= (uint16_t)rcv_char;
+			TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
+			TIMSK0 |= (1<<OCIE0A);		        /if you want interrupt
+		}
+		rcv_valid = 0;
+		
+	}
+	
 }
 
