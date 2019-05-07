@@ -38,9 +38,9 @@ void adx_read_id()
 	/* ADX chip manufacturer ID */
 	uint8_t temp;
 	adx_chip_select(1);
-	USART_Receive(ADX_RD);
-	USART_Receive(ADX_DEVID);  //device id address 0x00
-	temp = USART_Receive(0x00);//dummy byte to read in register
+	USART_Receive(ADX_RD, VIBE);
+	USART_Receive(ADX_DEVID, VIBE);  //device id address 0x00
+	temp = USART_Receive(0x00, VIBE);//dummy byte to read in register
 	adx_chip_select(0);
 }
 
@@ -49,16 +49,16 @@ void adx_wr_reg(uint8_t reg, uint8_t value)
 	/* for register setting*/
 	uint8_t temp;
 	adx_chip_select(1);
-	USART_Receive(ADX_WR);
-	USART_Receive(reg);		//register
-	USART_Receive(value);  // value 
-	temp = USART_Receive(0x00);//dummy byte to read in register
+	USART_Receive(ADX_WR, VIBE);
+	USART_Receive(reg, VIBE);		//register
+	USART_Receive(value, VIBE);  // value 
+	temp = USART_Receive(0x00, VIBE);//dummy byte to read in register
 	adx_chip_select(0);
 }
 
 void adx_setup(){
-	adx_wr_reg(ADX_THRESH_ACT_L, 250);
-	adx_wr_reg(ADX_THRESH_ACT_H, 0);
+	adx_wr_reg(ADX_THRESH_ACT_L, vibe_lo_thresh);
+	adx_wr_reg(ADX_THRESH_ACT_H, vibe_hi_thresh);
 	adx_wr_reg(ADX_TIME_ACT, 5);
 	adx_wr_reg(ADX_FILTER_CTL, 0x11);  //divide time_act by 1
 	adx_wr_reg(ADX_ACT_INACT_CTL, 0x03); //Activity enabled in referenced mode
@@ -70,9 +70,9 @@ uint8_t adx_rd_reg(uint8_t reg){
 	/* ADX status */
 	uint8_t temp;
 	adx_chip_select(1);
-	USART_Receive(ADX_RD);
-	USART_Receive(reg);  //device id address 0x00
-	temp = USART_Receive(0x00);
+	USART_Receive(ADX_RD, VIBE);
+	USART_Receive(reg, VIBE);  //device id address 0x00
+	temp = USART_Receive(0x00, VIBE);
 	adx_chip_select(0);
 	return temp;
 }
@@ -81,9 +81,9 @@ uint8_t adx_read_status(){
 	/* ADX status */
 	uint8_t temp;
 	adx_chip_select(1);
-	USART_Receive(ADX_RD);
-	USART_Receive(ADX_STATUS);  //device id address 0x00
-	temp = USART_Receive(0x00);
+	USART_Receive(ADX_RD, VIBE);
+	USART_Receive(ADX_STATUS, VIBE);  //device id address 0x00
+	temp = USART_Receive(0x00, VIBE);
     adx_chip_select(0);
 	
 	return temp;

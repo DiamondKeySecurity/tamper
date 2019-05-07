@@ -36,60 +36,79 @@ void mlx_start_meas()
 {
 	/* MLX chip start temperature measurement */
 	mlx_chip_select(1);
-	USART_Receive(MLX_SM);
-	USART_Receive(MLX_TEMP_AMB);
+	USART_Receive(MLX_SM, LIGHT);
+	USART_Receive(MLX_TEMP_AMB, LIGHT);
 	mlx_chip_select(0);
 }
 
 void mlx_get_meas()
 {
+	int16_t temp_t;
 	/* MLX chip get temp and ambient chan values */
 	mlx_chip_select(1);
-	USART_Receive(MLX_RO);
-	USART_Receive(0);
+	USART_Receive(MLX_RO, LIGHT);
+	USART_Receive(0, LIGHT);
 	//read in values
-	temperature = USART_Receive(0)<<8;
-	temperature |= USART_Receive(0);
-	light =  USART_Receive(0)<<8;
-	light |= USART_Receive(0); 
+	temp_t = USART_Receive(0, LIGHT)<<8;
+	temp_t |= USART_Receive(0, LIGHT);
+	light =  USART_Receive(0, LIGHT)<<8;
+	light |= USART_Receive(0, LIGHT); 
 	mlx_chip_select(0);
-	
+	//the calibrated temp output
+	temperature = 30 + (((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
 }
 
 void mlx_setup()
 {
 	/* MLX chip setup enable temp and Ambient Ch. C */
 	mlx_chip_select(1);
-	USART_Receive(MLX_WR);
-	USART_Receive(MLX_CH_EN);
-	USART_Receive(MLX_CH_EN_ADDP);
+	USART_Receive(MLX_WR, LIGHT);
+	USART_Receive(MLX_CH_EN, LIGHT);
+	USART_Receive(MLX_CH_EN_ADDP, LIGHT);
 	mlx_chip_select(0);
 }
 
+void mlx_get_calib()
+{
+	/* MLX chip get temp and ambient chan values */
+	mlx_chip_select(1);
+	USART_Receive(MLX_RR, LIGHT);
+	USART_Receive(MLX_CALIB1, LIGHT);
+	//read in value
+	calib1 = USART_Receive(0, LIGHT);
+	mlx_chip_select(0);
+	mlx_chip_select(1);
+	USART_Receive(MLX_RR, LIGHT);
+	USART_Receive(MLX_CALIB2, LIGHT);
+	//read in value
+	calib2 = USART_Receive(0, LIGHT);
+	mlx_chip_select(0);
+	
+}
 void mlx_nop(){
 	mlx_chip_select(1);
-	USART_Receive(0);
-	USART_Receive(0);
+	USART_Receive(0, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 }
 void mlx_reset(){
 	mlx_chip_select(1);
-	USART_Receive(MLX_RS);
-	USART_Receive(0);
+	USART_Receive(MLX_RS, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 }
 
 void mlx_request_sleep(){
 	mlx_chip_select(1);
-	USART_Receive(MLX_RSLP);
-	USART_Receive(0);
+	USART_Receive(MLX_RSLP, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 }
 
 void mlx_confirm_sleep(){
 	mlx_chip_select(1);
-	USART_Receive(MLX_CSLP);
-	USART_Receive(0);
+	USART_Receive(MLX_CSLP, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 }
 
@@ -97,26 +116,26 @@ uint8_t mlx_sleep()
 {
 	uint8_t confirm;
 	mlx_chip_select(1);
-	USART_Receive(MLX_RS);
-	USART_Receive(0);
+	USART_Receive(MLX_RS, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 	/* put MLX in to lowest power, disables WDOG and measurements*/
 	/*first make request*/
 	mlx_chip_select(1);
-	USART_Receive(MLX_RSLP);
-	USART_Receive(0);
+	USART_Receive(MLX_RSLP, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 	
 	/*then confirm*/
 	mlx_chip_select(1);
-	confirm = USART_Receive(MLX_CSLP);
-	USART_Receive(0);
+	confirm = USART_Receive(MLX_CSLP, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 	
 	/*then confirm*/
 	mlx_chip_select(1);
-	confirm = USART_Receive(MLX_CSLP);
-	USART_Receive(0);
+	confirm = USART_Receive(MLX_CSLP, LIGHT);
+	USART_Receive(0, LIGHT);
 	mlx_chip_select(0);
 	for (int i = 0; i < 16000; i++);
 	return confirm;	

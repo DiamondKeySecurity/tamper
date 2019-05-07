@@ -44,7 +44,7 @@
 
 #define DB_SSP_SS PORTC7
 
-uint8_t USART_Receive (uint8_t data);
+uint8_t USART_Receive (uint8_t data, uint8_t source);
 void spi_usart_setup(int on_flag);
 void ssp_chip_select(int select_flag);
 void ssp_boot();

@@ -63,13 +63,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SET_TEMP_HI 0x42
 #define SET_TEMP_LO	0x43
 #define SET_VIBE	0x44
+#define ENA_TAMP	0x45
+#define DIS_TAMP	0x46
+#define CHK_LIGHT	0x47
+#define CHK_TEMP	0x48
+#define CHK_VIBE	0x49
+#define SET_CONFIG	0x4A
+#define CHK_TAMP	0x4B
+#define CHK_FAULT	0x4C	
 
+#define LIGHT		0x01
+#define TEMP		0x02
+#define VIBE		0x04
+#define CASE		0x08
+#define SSP			0x10
+#define N25			0x20
+#define USART		0x40
+#define UNK			0x80
+#define TAMP_FLAGS	0x20
+#define LIGHT_PRE	0x22
+#define TEMP_PRE_HI 0x24
+#define TEMP_PRE_LO 0x26
+#define VIBE_PRE_HI	0x28
+#define VIBE_PRE_LO 0x30
 
-//uint8_t USART_Receive (uint8_t data);
+//uint8_t USART_eceive (uint8_t data);
 void mkm_wipe();
+void process_message();
+void send(uint8_t tx);
 volatile uint8_t ssp_out;
 volatile char wd_init;
-volatile uint16_t temperature;
+volatile int16_t temperature;
 volatile uint16_t light;
 volatile uint8_t start_bit;
 volatile uint8_t sending;
@@ -80,9 +104,32 @@ volatile uint8_t tx_char;
 volatile uint8_t tx_bit_count;
 volatile uint8_t rcv_valid;
 volatile uint8_t rcv_error_stop;
+volatile uint16_t light_thresh;
+volatile int16_t temp_hi_thresh;
+volatile int16_t temp_lo_thresh;
+volatile uint8_t vibe_lo_thresh;
+volatile uint8_t vibe_hi_thresh;
 volatile uint8_t light_status;
 volatile uint8_t temp_status;
 volatile uint8_t vibe_status;
+volatile uint8_t light_enable;
+volatile uint8_t temp_enable;
+volatile uint8_t vibe_enable;
+volatile uint8_t case_enable;
+volatile uint8_t tamper_detected;
+volatile uint8_t calib1;
+volatile uint8_t calib2;
+static uint8_t flags;
+static uint8_t configured;
+static uint8_t usart_to;
+static uint8_t ssp_fault;
+static uint8_t vibe_fault;
+static uint8_t light_fault;
+static uint8_t n25_fault;
+static uint8_t unk_fault;
+static uint8_t fault_code;
+static uint8_t fault_value1;
+static uint8_t fault_value2;
 
 volatile uint8_t rcv[9];
 

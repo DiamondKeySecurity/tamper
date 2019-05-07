@@ -43,12 +43,12 @@ void n25_read(uint8_t add1, uint8_t add2, uint8_t add3, uint8_t cnt)
 	/* ADX chip manufacturer ID */
 	uint8_t temp;
 	n25_chip_select(1);
-	USART_Receive(N25_RD);
-	USART_Receive(add1);  //device id address MSB
-	USART_Receive(add2);  //device id address MID
-	USART_Receive(add3);  //device id address LSB
+	USART_Receive(N25_RD, 0x20);
+	USART_Receive(add1, 0x20);  //device id address MSB
+	USART_Receive(add2, 0x20);  //device id address MID
+	USART_Receive(add3, 0x20);  //device id address LSB
 	for(int i = 0; i< cnt; i++){
-		temp = USART_Receive(0x00);//dummy byte to read in register
+		temp = USART_Receive(0x00, 0x20);//dummy byte to read in register
 	}
 	n25_chip_select(0);
 }

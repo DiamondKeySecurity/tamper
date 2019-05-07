@@ -31,10 +31,18 @@ void initTimer1(uint8_t timer)
 	TIMSK0 |= (1<<OCIE0A);              //if you want interrupt
 	
 }
+void initTimer2(uint8_t timer)
+{
+	TCCR1A = (1<<COM0A1) | (1 << WGM01);             //CTC mode
+	TCCR1B = (1 << CS00);              //div1
+	OCR0A = timer;						// 50us compare value
+	//TIFR1 =
+	TIMSK1 |= (1<<OCIE1A);              //if you want interrupt
+	
+}
 
 
-
-//watchdog timer
+//soft-uart timer
 ISR (TIMER0_COMPA_vect)
 {
 	/*disable interrupts, should we or allow NMI of tamper switch detect? */
@@ -66,6 +74,7 @@ ISR (TIMER0_COMPA_vect)
 				//PCICR |= _BV(PCIE1);
 				PORTC |= _BV(PORTC6);
 				receiving = 0;
+				//return;
 			}
 			rcv_bit_count--;
 		}
@@ -77,7 +86,7 @@ ISR (TIMER0_COMPA_vect)
 		}
 		else {
 			if (tx_bit_count<8){
-				if (rcv_char & (1<<tx_bit_count)){  //check the bit sending LSB first
+				if (tx_char & (1<<tx_bit_count)){  //check the bit sending LSB first
 					PORTB |= _BV(PORTB2);
 				}
 				else{
@@ -96,5 +105,18 @@ ISR (TIMER0_COMPA_vect)
 	}
 	//
 	//sei();
+	
+}
+
+ISR (TIMER1_COMPA_vect)
+{
+	/*disable interrupts, should we or allow NMI of tamper switch detect? */
+	//cli();
+	//sei();
+	TCNT1 = 0x00;
+	int i;
+	//PORTC ^= _BV(PORTC6);		//toggle gp6 to check on progress
+	TIMSK1 &= ~(1<<OCIE1A);		//stop the  timer
+	usart_to = 0;
 	
 }

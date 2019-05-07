@@ -20,20 +20,24 @@
 /* SPI commands for Melexis chip */
 
 #define MLX_NOP			0x00
+#define MLX_CALIB1		0xB0
+#define MLX_CALIB2		0xC0
 #define MLX_SM			0xD0
 #define MLX_RS			0xF0
 #define MLX_RO			0xC3
 #define MLX_TEMP_AMB	0x60
 #define MLX_WR			0x87
+#define MLX_RR			0x8E
 #define MLX_RSLP		0xE1
 #define MLX_CSLP		0xA3
 #define MLX_CH_EN		0x84  //temp and Ambient ChC
 #define MLX_CH_EN_ADDP	0xD4  //EnChan address 7 odd parity with enable bits
 #define DB_MLX_SS PORTC5
 void mlx_start_meas();
-void mlx_chip_select(int select_flag);;
+void mlx_chip_select(int select_flag);
 void mlx_setup();
 void mlx_get_meas();
+void mlx_get_calib();
 uint8_t mlx_sleep();
 void mlx_reset();
 void mlx_request_sleep();

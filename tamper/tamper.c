@@ -50,6 +50,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 #include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
 #include <avr/sleep.h>
+#include <avr/eeprom.h>
 #include "tamper.h"
 #include "optic.h"
 #include "accel.h"
@@ -267,14 +268,15 @@ volatile int i =0;
 ISR (INT0_vect)
 {
 	/*disable interrupts until memory is cleared */
-
-	cli();
-	mkm_wipe();
-	/*TAMP_ON turns on LED and provides falling edge signal to Pi to indicate tamper event */
-	ssp_write(TAMP_ON);
-	ssp_int_reset();   /*read INTFA reg to reset flag*/
-	mkm_grab();		   /*prevents FPGA from accessing MKM */
-	sei();				/* re-enabling interrupts allows additional tamper trigger or tamper reset */
+	if(case_enable && configured == 0x55){
+		cli();
+		mkm_wipe();
+		/*TAMP_ON turns on LED and provides falling edge signal to Pi to indicate tamper event */
+		ssp_write(TAMP_ON);
+		ssp_int_reset();   /*read INTFA reg to reset flag*/
+		mkm_grab();		   /*prevents FPGA from accessing MKM */
+		sei();				/* re-enabling interrupts allows additional tamper trigger or tamper reset */
+	}
 	//sleep_disable();
 }
 #endif
@@ -309,6 +311,7 @@ ISR (PCINT1_vect)
 	PCMSK1 &= ~_BV(PCINT11);
 	//PCICR &= ~_BV(PCIE1);
 	//PCIFR |= _BV(PCIF1);
+	rcv_error_stop = 0;
 	start_bit = 1;
 	rcv_bit_count = 9;   // TBD 7 or 8? look for the stop bit?
 	rcv_char = 0x00; //flush receive buffer
@@ -355,6 +358,47 @@ init_interrupts()
   sei();
 }
 
+static void 
+init_tamper_values(uint8_t flags_set, uint8_t source)
+{
+	
+	//if (source == 1) {
+		//flags = eeprom_read_byte ((uint8_t *)TAMP_FLAGS);
+	//}
+	//else {
+		flags = flags_set;
+	//}
+	if (flags & LIGHT) {
+		light_enable = 1;
+	}
+	else {
+		light_enable = 0;
+	}
+	if (flags & TEMP) {
+		temp_enable = 1;
+	}
+	else {
+		temp_enable = 0;
+	}
+	if (flags & VIBE) {
+		vibe_enable = 1;
+	}
+	else{
+		vibe_enable = 0;
+	}
+	if (flags & CASE) {
+		case_enable = 1;
+	}
+	else{
+		case_enable = 0;
+	}
+	/*light_thresh = eeprom_read_word((uint16_t *)LIGHT_PRE);
+	temp_hi_thresh = eeprom_read_word((uint16_t *)TEMP_PRE_HI);
+	temp_lo_thresh = eeprom_read_word((uint16_t *)TEMP_PRE_LO);
+	vibe_hi_thresh = eeprom_read_byte ((uint8_t *) VIBE_PRE_HI);
+	vibe_lo_thresh = eeprom_read_byte((uint8_t *) VIBE_PRE_HI);*/
+	
+}
 static void
 init_int0()
 {
@@ -423,14 +467,26 @@ sleep()
 int
 main()
 {
+  mkm_grab();
   init_ports();
   init_power_reduction();
   init_interrupts();
+  //mlx_get_calib();
+  //init_tamper_values(0, 1);
+	
+  flags = 0xFF;
+  configured = 0;
+  tamper_detected = 0;
   uint8_t ssp_status = 0;
   sending = 0;
   receiving = 0;
   tx_char = 0;
   tx_bit_count = 0;
+  light_fault = 0;
+  vibe_fault = 0;
+  ssp_fault = 0;
+  n25_fault = 0;
+  unk_fault = 0;
   PORTB |= _BV(PORTB3);   //set TX idle high
   wd_init = 0x01;
   ssp_out = WDOG_RS;
@@ -439,16 +495,13 @@ main()
   TCCR0A = (1<<COM0A1) | (1 << WGM01);             //CTC mode
   TCCR0B = (1 << CS00);              //div1
   OCR0A = 180;						// 208us compare value for 4800 baud
-  rcv[0]= 0xff;
-  rcv[1] = 0x02;
-  rcv[2] = 0x03;
-  rcv[3] = 0x04;
-  rcv[4] = 0x05;
-  rcv[5]= 0x06;
-  rcv[6] = 0x07;
-  rcv[7] = 0x08;
-  rcv[8]= 0x09;
-  spi_usart_setup(1);
+  
+   TCNT1 = 0x00;
+   TCCR1A = (1<<COM1A1) | (1 << WGM01);             //CTC mode
+   TCCR1B = (1 << CS00);              //div1
+   OCR1A = 180;						// 208us compare value for 4800 baud
+ // spi_usart_setup(1);
+ 
   //put mlx to sleep as soon as possible to avoid wdog reset
  /* mlx_reset();
   mlx_reset();
@@ -461,7 +514,8 @@ main()
 
   adx_wr_reg(ADX_POWER_CTL, 0x00);
   adx_rd_reg(ADX_STATUS);*/
-  ssp_boot();
+ 
+  /*ssp_boot();
   //ssp_read_byte();
   //setup directions for ssp pins
   ssp_setup();
@@ -474,90 +528,295 @@ main()
  uint8_t check =  ssp_read_byte();
   //init_int0();
   mlx_sleep();
-  /* do not need to configure these for tamper switch only
+  // do not need to configure these for tamper switch only 
   adx_setup();
   mlx_setup();
-  mlx_start_meas();*/
+  mlx_start_meas();
   
   //initTimer1(TWD_INIT);
   
-  mkm_release();
+  mkm_release();*/
   /* Flash LED's at startup. */
   AVR_LED_PORT |= 0x0f;
   for (int i = 0; i < 16000; i++);
   AVR_LED_PORT &= ~0x0f;
-// go to sleep, interrupt will wake us
+  // go to sleep, interrupt will wake us
   //sleep();
+  temperature = 80;
+  light = 0xaa55;
+  
   rcv_valid = 0;
   sei();
   while (1)
     {
 		//n25_read(0x00, 0x00, 0x00, 8);
 		//read in character and echo back
-		if (rcv_valid ==1){
+		if (rcv_valid == 1){
 			rcv_valid = 0;
 			start_bit = 1;
-			tx_char = rcv_char;
-			tx_bit_count = 0;
-			sending = 1;
-			TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
-			TIMSK0 |= (1<<OCIE0A);		        /if you want interrupt
+			process_message();
 		}
-		
-		
-		
-      /*read the ssp lines for events */
-	  //ssp_status = ssp_read_byte();
-	  //if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
-		  //mkm_wipe();
-	  //}
-	  /*read accelerometer */
-	  //if (adx_read_status() & ADX_ACT){
-		  //mkm_wipe();
-	  //}
-	  /*read light and temp*/
-	  //mlx_get_meas();
-	  /* if temp is out side normal storage or sensor is exposed to bright light
-	  actual values TBD */
-	  //if ((temperature > 80) | (temperature < 0) | (light > 32000) ) {
-		  //mkm_wipe();
-	  //}
-	  
-	  //if (panic_p())
-		//mkm_wipe();
-	 //sleep_enable();
+		check_usart_faults();
+		if (configured == 0x55) {
+			/*read the ssp lines for events */
+			//ssp_status = ssp_read_byte();
+			//if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
+				//mkm_wipe();
+			//}
+			//read accelerometer 
+			if ((adx_read_status() & ADX_ACT) && (vibe_enable)){
+				fault_code = VIBE;
+				mkm_wipe();
+			}
+			//}
+			//read light and temp
+			mlx_get_meas();
+			//if temp is out side normal storage or sensor is exposed to bright light
+			//actual values 1TBD 
+			if ((((temperature > temp_hi_thresh) | (temperature < temp_lo_thresh)) && temp_enable) ){
+				fault_code = TEMP;
+				fault_value1 = ((uint8_t) temperature>>8);
+				fault_value2 = ((uint8_t) temperature&0xFF);
+				mkm_wipe();
+			}
+			if((light > light_thresh) && light_enable ) {
+				fault_code = LIGHT;
+				fault_value1 = ((uint8_t) light>8);
+				fault_value2 = ((uint8_t) light&0xFF);
+				mkm_wipe();
+			}
+			//if (panic_p())
+			//mkm_wipe();
+			//sleep_enable();
 
-      /* Sleep is not working right at the moment (the AVR seems to be reset
-	 when brought out of sleep mode by a press on the panic button).
-	MAD 11/29/18 -Because the sleep power mode did not catch PCINTx type interrupts
-	 if (!panic_p())
-	   sleep();
-      */
-    }
+			/* Sleep is not working right at the moment (the AVR seems to be reset
+			when brought out of sleep mode by a press on the panic button).
+			MAD 11/29/18 -Because the sleep power mode did not catch PCINTx type interrupts
+			if (!panic_p())
+			sleep();
+			*/
+		}//end if configured
+    }//end while
 
   return 0;
 }
 
 void process_message(){
 	if (rcv_char == SET_LIGHT) {
+		int light_temp = 0;
 		rcv_valid = 0;
-		while (!rcv_valid & !rcv_error_stop){
-			light = (uint16_t)rcv_char <<8;
-			TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
-			TIMSK0 |= (1<<OCIE0A);		        /if you want interrupt
+		light_status = 1;
+		while (!rcv_valid & !rcv_error_stop){ }
+			
+		light_temp = (uint16_t)rcv_char <<8;
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			light_status = 0;
+			send(0x15);
 		}
+		else {
+			light_temp = (uint16_t)rcv_char <<8;
+		}
+		
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
 		if (rcv_error_stop) {
 			light_status = 0;
+			send(0x15);
+		} 
+		else{
+			light_temp |= (uint16_t)rcv_char;
 		}
-		rcv_valid = 0;
-		while (!rcv_valid & !rcv_error_stop){
-			light |= (uint16_t)rcv_char;
-			TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
-			TIMSK0 |= (1<<OCIE0A);		        /if you want interrupt
+		if (light_status){
+			light_thresh = light_temp;
+			//eeprom_write_word((uint16_t *)LIGHT_PRE, light_thresh);
+			light_status = 0;
+			send(0x14);
 		}
+	}
+	if (rcv_char == SET_TEMP_HI) {
 		rcv_valid = 0;
+		//fix for 16 bit word
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			light_status = 0;
+			send(0x15);
+		}
+		else {
+			send(0x14);
+			temp_hi_thresh = rcv_char;
+			//eeprom_write_word((uint16_t *)TEMP_PRE_HI, temp_hi_thresh);
+		}
+	}
+	if (rcv_char == SET_TEMP_LO) {
+		rcv_valid = 0;
+		//fix for 16 bit word
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			light_status = 0;
+			send(0x15);
+		}
+		else {
+			send(0x14);
+			temp_hi_thresh = rcv_char;
+			//eeprom_write_word((uint16_t *)TEMP_PRE_LO, temp_lo_thresh);
+		}
+	}
+	if (rcv_char == SET_VIBE) {
+		int vibe_temp_lo = 0;
+		int vibe_temp_hi = 0;
+		rcv_valid = 0;
+		vibe_status = 1;
+		while (!rcv_valid & !rcv_error_stop){ }
 		
+		vibe_temp_lo = rcv_char;
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			vibe_status = 0;
+			send(0x15);
+		}
+		else {
+			vibe_temp_lo = (uint16_t)rcv_char <<8;
+		}
+		
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
+		if (rcv_error_stop) {
+			vibe_status = 0;
+			send(0x15);
+		}
+		else{
+			vibe_temp_hi = rcv_char;
+		}
+		if (vibe_status){
+			vibe_lo_thresh = vibe_temp_lo;
+			vibe_hi_thresh = vibe_temp_hi;
+			//eeprom_write_byte((uint8_t *)VIBE_PRE_HI, vibe_hi_thresh);
+			//eeprom_write_byte((uint8_t *)VIBE_PRE_LO, vibe_lo_thresh);
+			vibe_status = 0;
+			adx_setup();
+			send(0x14);
+		}
+	}
+	if (rcv_char == ENA_TAMP) {
+		rcv_valid = 0;
+		//fix for 16 bit word
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			light_status = 0;
+			send(0x15);
+		}
+		else {
+			//uint8_t flags = eeprom_read_byte((uint8_t *)TAMP_FLAGS);
+			flags |= rcv_char;
+			init_tamper_values(flags, 0);
+			send(0x14);
+		}
+	}
+	if (rcv_char == DIS_TAMP) {
+		rcv_valid = 0;
+		//fix for 16 bit word
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			light_status = 0;
+			send(0x15);
+		}
+		else {
+			//uint8_t flags = eeprom_read_byte((uint8_t *)TAMP_FLAGS);
+			flags &= ~rcv_char;
+			init_tamper_values(flags, 0);
+			send(0x14);
+		}
+	}
+	if (rcv_char == CHK_LIGHT) {
+		rcv_valid = 0;
+		//fix for 16 bit word
+		send ((uint8_t) light>>8);
+		send ((uint8_t) light&0xFF);
+		send(0x14);
+	}
+	if (rcv_char == CHK_TEMP) {
+		rcv_valid = 0;
+		//fix for 16 bit word
+		send ((uint8_t) temperature>>8);
+		send ((uint8_t)temperature&0xFF);
+		send(0x14);
+	}
+	if (rcv_char == SET_CONFIG) {
+		rcv_valid = 0;
+		mkm_release();
+		configured = 0x55;
+		send(0x14);
+	}
+	
+	if (rcv_char == CHK_FAULT) {
+		rcv_valid = 0;
+		send(fault_code);
+		send(fault_value1);
+		send(fault_value2);
+		send(0x14);
+	}
+	
+	if (rcv_char == CHK_TAMP) {
+		rcv_valid = 0;
+		if (tamper_detected == 1) {
+			send(0x15);
+		}
+		else {
+			send(0x14);
+		}
+	}
+}
+
+void send(uint8_t tx){
+	tx_char = tx;
+	tx_bit_count = 0;
+	start_bit = 1;
+	sending = 1;
+	TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
+	TIMSK0 |= (1<<OCIE0A);
+}
+
+void check_usart_faults(){
+	if ((light_fault > 20)&& (light_enable||temp_enable)){  //light and temp same chip
+		fault_code = USART;
+		fault_value1 = LIGHT;
+		fault_value2 = 0x00;
+		tamper_detected = 1;
+	}
+	if ((vibe_fault > 20) && vibe_enable){
+		fault_code = USART;
+		fault_value1 = VIBE;
+		fault_value2 = 0x00;
+		tamper_detected = 1;
+	}
+	if ((ssp_fault >20) && case_enable) {
+		fault_code = USART;
+		fault_value1 = SSP;
+		fault_value2 = 0x00;
+		tamper_detected = 1;
+	}
+	if (n25_fault >20) {
+		fault_code = USART;
+		fault_value1 = N25;
+		fault_value2 = 0x00;
+		tamper_detected = 1;
+	}
+	if (unk_fault >20) {
+		fault_code = USART;
+		fault_value1 = UNK;
+		fault_value2 = 0x00;
+		tamper_detected = 1;
 	}
 	
 }
-
