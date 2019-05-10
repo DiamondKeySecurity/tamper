@@ -3,31 +3,31 @@ Sensor_board.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  0000108e  2**0
+  0 .data         00000000  00800100  00800100  000011a6  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000101a  00000000  00000000  00000074  2**1
+  1 .text         00001132  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000003a  00800100  00800100  0000108e  2**0
+  2 .bss          0000003b  00800100  00800100  000011a6  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  0000108e  2**0
+  3 .comment      00000030  00000000  00000000  000011a6  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000010c0  2**2
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000011d8  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000001c0  00000000  00000000  000010fc  2**0
+  5 .debug_aranges 000001c0  00000000  00000000  00001214  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00003e4f  00000000  00000000  000012bc  2**0
+  6 .debug_info   00003ea0  00000000  00000000  000013d4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000f70  00000000  00000000  0000510b  2**0
+  7 .debug_abbrev 00000f70  00000000  00000000  00005274  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00001a22  00000000  00000000  0000607b  2**0
+  8 .debug_line   00001b0a  00000000  00000000  000061e4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000003f4  00000000  00000000  00007aa0  2**2
+  9 .debug_frame  000003f4  00000000  00000000  00007cf0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000897  00000000  00000000  00007e94  2**0
+ 10 .debug_str    0000089c  00000000  00000000  000080e4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00001303  00000000  00000000  0000872b  2**0
+ 11 .debug_loc    00001311  00000000  00000000  00008980  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000260  00000000  00000000  00009a2e  2**0
+ 12 .debug_ranges 00000278  00000000  00000000  00009c91  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -42,10 +42,10 @@ Disassembly of section .text:
        c:	23 c0       	rjmp	.+70     	; 0x54 <__bad_interrupt>
        e:	22 c0       	rjmp	.+68     	; 0x54 <__bad_interrupt>
       10:	21 c0       	rjmp	.+66     	; 0x54 <__bad_interrupt>
-      12:	c1 c7       	rjmp	.+3970   	; 0xf96 <__vector_9>
+      12:	4d c8       	rjmp	.-3942   	; 0xfffff0ae <__eeprom_end+0xff7ef0ae>
       14:	1f c0       	rjmp	.+62     	; 0x54 <__bad_interrupt>
       16:	1e c0       	rjmp	.+60     	; 0x54 <__bad_interrupt>
-      18:	22 c7       	rjmp	.+3652   	; 0xe5e <__vector_12>
+      18:	ae c7       	rjmp	.+3932   	; 0xf76 <__vector_12>
       1a:	1c c0       	rjmp	.+56     	; 0x54 <__bad_interrupt>
       1c:	1b c0       	rjmp	.+54     	; 0x54 <__bad_interrupt>
       1e:	1a c0       	rjmp	.+52     	; 0x54 <__bad_interrupt>
@@ -78,11 +78,11 @@ Disassembly of section .text:
       48:	1d 92       	st	X+, r1
 
 0000004a <.do_clear_bss_start>:
-      4a:	aa 33       	cpi	r26, 0x3A	; 58
+      4a:	ab 33       	cpi	r26, 0x3B	; 59
       4c:	b2 07       	cpc	r27, r18
       4e:	e1 f7       	brne	.-8      	; 0x48 <.do_clear_bss_loop>
-      50:	30 d6       	rcall	.+3168   	; 0xcb2 <main>
-      52:	e1 c7       	rjmp	.+4034   	; 0x1016 <_exit>
+      50:	bd d6       	rcall	.+3450   	; 0xdcc <main>
+      52:	6d c8       	rjmp	.-3878   	; 0xfffff12e <__eeprom_end+0xff7ef12e>
 
 00000054 <__bad_interrupt>:
       54:	d5 cf       	rjmp	.-86     	; 0x0 <__vectors>
@@ -95,7 +95,7 @@ Disassembly of section .text:
 	return temp;
 }
       56:	cf 93       	push	r28
-      58:	c0 91 1d 01 	lds	r28, 0x011D	; 0x80011d <vibe_lo_thresh>
+      58:	c0 91 1e 01 	lds	r28, 0x011E	; 0x80011e <vibe_lo_thresh>
       5c:	54 98       	cbi	0x0a, 4	; 10
       5e:	64 e0       	ldi	r22, 0x04	; 4
       60:	8a e0       	ldi	r24, 0x0A	; 10
@@ -288,17 +288,17 @@ void mlx_get_meas()
      16e:	90 e0       	ldi	r25, 0x00	; 0
      170:	98 2f       	mov	r25, r24
      172:	88 27       	eor	r24, r24
-     174:	90 93 1c 01 	sts	0x011C, r25	; 0x80011c <light+0x1>
-     178:	80 93 1b 01 	sts	0x011B, r24	; 0x80011b <light>
+     174:	90 93 1d 01 	sts	0x011D, r25	; 0x80011d <light+0x1>
+     178:	80 93 1c 01 	sts	0x011C, r24	; 0x80011c <light>
 	light |= USART_Receive(0, LIGHT); 
      17c:	61 e0       	ldi	r22, 0x01	; 1
      17e:	80 e0       	ldi	r24, 0x00	; 0
      180:	74 d0       	rcall	.+232    	; 0x26a <USART_Receive>
-     182:	20 91 1b 01 	lds	r18, 0x011B	; 0x80011b <light>
-     186:	30 91 1c 01 	lds	r19, 0x011C	; 0x80011c <light+0x1>
+     182:	20 91 1c 01 	lds	r18, 0x011C	; 0x80011c <light>
+     186:	30 91 1d 01 	lds	r19, 0x011D	; 0x80011d <light+0x1>
      18a:	28 2b       	or	r18, r24
-     18c:	30 93 1c 01 	sts	0x011C, r19	; 0x80011c <light+0x1>
-     190:	20 93 1b 01 	sts	0x011B, r18	; 0x80011b <light>
+     18c:	30 93 1d 01 	sts	0x011D, r19	; 0x80011d <light+0x1>
+     190:	20 93 1c 01 	sts	0x011C, r18	; 0x80011c <light>
 void mlx_chip_select(int select_flag)
 {
 	if (select_flag)
@@ -313,7 +313,7 @@ void mlx_chip_select(int select_flag)
 	//the calibrated temp output
 	temperature = 30 + (((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
      196:	20 91 11 01 	lds	r18, 0x0111	; 0x800111 <calib2>
-     19a:	60 91 32 01 	lds	r22, 0x0132	; 0x800132 <calib1>
+     19a:	60 91 33 01 	lds	r22, 0x0133	; 0x800133 <calib1>
      19e:	30 e0       	ldi	r19, 0x00	; 0
      1a0:	20 52       	subi	r18, 0x20	; 32
      1a2:	31 09       	sbc	r19, r1
@@ -339,11 +339,11 @@ void mlx_chip_select(int select_flag)
      1ca:	70 e0       	ldi	r23, 0x00	; 0
      1cc:	6d 5c       	subi	r22, 0xCD	; 205
      1ce:	7f 4f       	sbci	r23, 0xFF	; 255
-     1d0:	fb d6       	rcall	.+3574   	; 0xfc8 <__divmodhi4>
+     1d0:	87 d7       	rcall	.+3854   	; 0x10e0 <__divmodhi4>
      1d2:	62 5e       	subi	r22, 0xE2	; 226
      1d4:	7f 4f       	sbci	r23, 0xFF	; 255
-     1d6:	70 93 1a 01 	sts	0x011A, r23	; 0x80011a <temperature+0x1>
-     1da:	60 93 19 01 	sts	0x0119, r22	; 0x800119 <temperature>
+     1d6:	70 93 1b 01 	sts	0x011B, r23	; 0x80011b <temperature+0x1>
+     1da:	60 93 1a 01 	sts	0x011A, r22	; 0x80011a <temperature>
 }
      1de:	df 91       	pop	r29
      1e0:	cf 91       	pop	r28
@@ -608,12 +608,12 @@ ssp_chip_select(int select_flag)
      3f2:	08 95       	ret
 
 000003f4 <__vector_3>:
-	tx_char = tx;
-	tx_bit_count = 0;
 	start_bit = 1;
 	sending = 1;
 	TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
 	TIMSK0 |= (1<<OCIE0A);
+	while(sending);
+}
      3f4:	1f 92       	push	r1
      3f6:	0f 92       	push	r0
      3f8:	0f b6       	in	r0, 0x3f	; 63
@@ -654,11 +654,11 @@ ssp_chip_select(int select_flag)
      43a:	80 83       	st	Z, r24
      43c:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
      440:	81 e0       	ldi	r24, 0x01	; 1
-     442:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
+     442:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
      446:	99 e0       	ldi	r25, 0x09	; 9
-     448:	90 93 26 01 	sts	0x0126, r25	; 0x800126 <rcv_bit_count>
-     44c:	10 92 1f 01 	sts	0x011F, r1	; 0x80011f <rcv_char>
-     450:	80 93 24 01 	sts	0x0124, r24	; 0x800124 <receiving>
+     448:	90 93 27 01 	sts	0x0127, r25	; 0x800127 <rcv_bit_count>
+     44c:	10 92 20 01 	sts	0x0120, r1	; 0x800120 <rcv_char>
+     450:	80 93 25 01 	sts	0x0125, r24	; 0x800125 <receiving>
      454:	ee e6       	ldi	r30, 0x6E	; 110
      456:	f0 e0       	ldi	r31, 0x00	; 0
      458:	80 81       	ld	r24, Z
@@ -804,1322 +804,1422 @@ ssp_chip_select(int select_flag)
      574:	e6 cf       	rjmp	.-52     	; 0x542 <__vector_1+0x32>
 
 00000576 <process_message>:
-     576:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     576:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      57a:	81 34       	cpi	r24, 0x41	; 65
      57c:	09 f4       	brne	.+2      	; 0x580 <process_message+0xa>
-     57e:	62 c2       	rjmp	.+1220   	; 0xa44 <process_message+0x4ce>
-     580:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     57e:	cd c2       	rjmp	.+1434   	; 0xb1a <process_message+0x5a4>
+     580:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      584:	82 34       	cpi	r24, 0x42	; 66
      586:	09 f4       	brne	.+2      	; 0x58a <process_message+0x14>
-     588:	33 c2       	rjmp	.+1126   	; 0x9f0 <process_message+0x47a>
-     58a:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     588:	9a c2       	rjmp	.+1332   	; 0xabe <process_message+0x548>
+     58a:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      58e:	83 34       	cpi	r24, 0x43	; 67
      590:	09 f4       	brne	.+2      	; 0x594 <process_message+0x1e>
-     592:	04 c2       	rjmp	.+1032   	; 0x99c <process_message+0x426>
-     594:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     592:	67 c2       	rjmp	.+1230   	; 0xa62 <process_message+0x4ec>
+     594:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      598:	84 34       	cpi	r24, 0x44	; 68
      59a:	09 f4       	brne	.+2      	; 0x59e <process_message+0x28>
-     59c:	9a c1       	rjmp	.+820    	; 0x8d2 <process_message+0x35c>
-     59e:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     59c:	f5 c1       	rjmp	.+1002   	; 0x988 <process_message+0x412>
+     59e:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5a2:	85 34       	cpi	r24, 0x45	; 69
      5a4:	09 f4       	brne	.+2      	; 0x5a8 <process_message+0x32>
-     5a6:	4a c1       	rjmp	.+660    	; 0x83c <process_message+0x2c6>
-     5a8:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     5a6:	93 c1       	rjmp	.+806    	; 0x8ce <process_message+0x358>
+     5a8:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5ac:	86 34       	cpi	r24, 0x46	; 70
      5ae:	09 f4       	brne	.+2      	; 0x5b2 <process_message+0x3c>
-     5b0:	f9 c0       	rjmp	.+498    	; 0x7a4 <process_message+0x22e>
-     5b2:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     5b0:	30 c1       	rjmp	.+608    	; 0x812 <process_message+0x29c>
+     5b2:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5b6:	87 34       	cpi	r24, 0x47	; 71
      5b8:	09 f4       	brne	.+2      	; 0x5bc <process_message+0x46>
-     5ba:	bd c0       	rjmp	.+378    	; 0x736 <process_message+0x1c0>
-     5bc:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     5ba:	e6 c0       	rjmp	.+460    	; 0x788 <process_message+0x212>
+     5bc:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5c0:	88 34       	cpi	r24, 0x48	; 72
      5c2:	09 f4       	brne	.+2      	; 0x5c6 <process_message+0x50>
-     5c4:	81 c0       	rjmp	.+258    	; 0x6c8 <process_message+0x152>
-     5c6:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     5c4:	9c c0       	rjmp	.+312    	; 0x6fe <process_message+0x188>
+     5c6:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5ca:	8a 34       	cpi	r24, 0x4A	; 74
      5cc:	09 f4       	brne	.+2      	; 0x5d0 <process_message+0x5a>
-     5ce:	64 c0       	rjmp	.+200    	; 0x698 <process_message+0x122>
-     5d0:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     5ce:	7b c0       	rjmp	.+246    	; 0x6c6 <process_message+0x150>
+     5d0:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5d4:	8c 34       	cpi	r24, 0x4C	; 76
-     5d6:	e9 f0       	breq	.+58     	; 0x612 <process_message+0x9c>
-     5d8:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
+     5d6:	09 f1       	breq	.+66     	; 0x61a <process_message+0xa4>
+     5d8:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
      5dc:	8b 34       	cpi	r24, 0x4B	; 75
      5de:	09 f0       	breq	.+2      	; 0x5e2 <process_message+0x6c>
      5e0:	08 95       	ret
-     5e2:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     5e6:	80 91 21 01 	lds	r24, 0x0121	; 0x800121 <tamper_detected>
+     5e2:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     5e6:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <tamper_detected>
      5ea:	81 30       	cpi	r24, 0x01	; 1
      5ec:	09 f4       	brne	.+2      	; 0x5f0 <process_message+0x7a>
-     5ee:	e1 c2       	rjmp	.+1474   	; 0xbb2 <process_message+0x63c>
+     5ee:	00 c3       	rjmp	.+1536   	; 0xbf0 <process_message+0x67a>
      5f0:	84 e1       	ldi	r24, 0x14	; 20
-     5f2:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     5f6:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
+     5f2:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     5f6:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
      5fa:	81 e0       	ldi	r24, 0x01	; 1
-     5fc:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     600:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
+     5fc:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     600:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
      604:	16 bc       	out	0x26, r1	; 38
      606:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
      60a:	82 60       	ori	r24, 0x02	; 2
      60c:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     610:	08 95       	ret
-     612:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     616:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <fault_code>
-     61a:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     61e:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     622:	81 e0       	ldi	r24, 0x01	; 1
-     624:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     628:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     62c:	16 bc       	out	0x26, r1	; 38
-     62e:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     632:	92 60       	ori	r25, 0x02	; 2
-     634:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     638:	90 91 07 01 	lds	r25, 0x0107	; 0x800107 <fault_value1>
-     63c:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     640:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     644:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     648:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     64c:	16 bc       	out	0x26, r1	; 38
-     64e:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     652:	92 60       	ori	r25, 0x02	; 2
-     654:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     658:	90 91 06 01 	lds	r25, 0x0106	; 0x800106 <fault_value2>
-     65c:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     660:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     664:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     668:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     66c:	16 bc       	out	0x26, r1	; 38
-     66e:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     672:	92 60       	ori	r25, 0x02	; 2
-     674:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     678:	94 e1       	ldi	r25, 0x14	; 20
-     67a:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     67e:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     682:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     686:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     68a:	16 bc       	out	0x26, r1	; 38
-     68c:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     690:	82 60       	ori	r24, 0x02	; 2
-     692:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     696:	a0 cf       	rjmp	.-192    	; 0x5d8 <process_message+0x62>
-     698:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     69c:	16 9a       	sbi	0x02, 6	; 2
-     69e:	17 98       	cbi	0x02, 7	; 2
-     6a0:	85 e5       	ldi	r24, 0x55	; 85
-     6a2:	80 93 0e 01 	sts	0x010E, r24	; 0x80010e <configured>
-     6a6:	84 e1       	ldi	r24, 0x14	; 20
-     6a8:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     6ac:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     6b0:	81 e0       	ldi	r24, 0x01	; 1
-     6b2:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     6b6:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     6ba:	16 bc       	out	0x26, r1	; 38
-     6bc:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     6c0:	82 60       	ori	r24, 0x02	; 2
-     6c2:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     6c6:	84 cf       	rjmp	.-248    	; 0x5d0 <process_message+0x5a>
-     6c8:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     6cc:	80 91 19 01 	lds	r24, 0x0119	; 0x800119 <temperature>
-     6d0:	90 91 1a 01 	lds	r25, 0x011A	; 0x80011a <temperature+0x1>
-     6d4:	10 92 33 01 	sts	0x0133, r1	; 0x800133 <tx_char>
-     6d8:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     6dc:	81 e0       	ldi	r24, 0x01	; 1
-     6de:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     6e2:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     6e6:	16 bc       	out	0x26, r1	; 38
-     6e8:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     6ec:	92 60       	ori	r25, 0x02	; 2
-     6ee:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     6f2:	20 91 19 01 	lds	r18, 0x0119	; 0x800119 <temperature>
-     6f6:	30 91 1a 01 	lds	r19, 0x011A	; 0x80011a <temperature+0x1>
-     6fa:	20 93 33 01 	sts	0x0133, r18	; 0x800133 <tx_char>
-     6fe:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     702:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     706:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     70a:	16 bc       	out	0x26, r1	; 38
-     70c:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     710:	92 60       	ori	r25, 0x02	; 2
-     712:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     716:	94 e1       	ldi	r25, 0x14	; 20
-     718:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     71c:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     720:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     724:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     728:	16 bc       	out	0x26, r1	; 38
-     72a:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     72e:	82 60       	ori	r24, 0x02	; 2
-     730:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     734:	48 cf       	rjmp	.-368    	; 0x5c6 <process_message+0x50>
-     736:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     73a:	80 91 1b 01 	lds	r24, 0x011B	; 0x80011b <light>
-     73e:	90 91 1c 01 	lds	r25, 0x011C	; 0x80011c <light+0x1>
-     742:	10 92 33 01 	sts	0x0133, r1	; 0x800133 <tx_char>
-     746:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     74a:	81 e0       	ldi	r24, 0x01	; 1
-     74c:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     750:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     754:	16 bc       	out	0x26, r1	; 38
-     756:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     75a:	92 60       	ori	r25, 0x02	; 2
-     75c:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     760:	20 91 1b 01 	lds	r18, 0x011B	; 0x80011b <light>
-     764:	30 91 1c 01 	lds	r19, 0x011C	; 0x80011c <light+0x1>
-     768:	20 93 33 01 	sts	0x0133, r18	; 0x800133 <tx_char>
-     76c:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     770:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     774:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     778:	16 bc       	out	0x26, r1	; 38
-     77a:	90 91 6e 00 	lds	r25, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     77e:	92 60       	ori	r25, 0x02	; 2
-     780:	90 93 6e 00 	sts	0x006E, r25	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     784:	94 e1       	ldi	r25, 0x14	; 20
-     786:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     78a:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     78e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     792:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     796:	16 bc       	out	0x26, r1	; 38
-     798:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     79c:	82 60       	ori	r24, 0x02	; 2
-     79e:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     7a2:	0c cf       	rjmp	.-488    	; 0x5bc <process_message+0x46>
-     7a4:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     7a8:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     7ac:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     7b0:	88 23       	and	r24, r24
-     7b2:	91 f1       	breq	.+100    	; 0x818 <process_message+0x2a2>
-     7b4:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     7b8:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     7bc:	81 30       	cpi	r24, 0x01	; 1
-     7be:	a1 f1       	breq	.+104    	; 0x828 <process_message+0x2b2>
-     7c0:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     7c4:	80 95       	com	r24
-     7c6:	90 91 0f 01 	lds	r25, 0x010F	; 0x80010f <flags>
-     7ca:	89 23       	and	r24, r25
-     7cc:	80 93 0f 01 	sts	0x010F, r24	; 0x80010f <flags>
-     7d0:	80 ff       	sbrs	r24, 0
-     7d2:	fb c1       	rjmp	.+1014   	; 0xbca <process_message+0x654>
-     7d4:	91 e0       	ldi	r25, 0x01	; 1
-     7d6:	90 93 1e 01 	sts	0x011E, r25	; 0x80011e <light_enable>
-     7da:	81 ff       	sbrs	r24, 1
-     7dc:	f3 c1       	rjmp	.+998    	; 0xbc4 <process_message+0x64e>
-     7de:	91 e0       	ldi	r25, 0x01	; 1
-     7e0:	90 93 20 01 	sts	0x0120, r25	; 0x800120 <temp_enable>
-     7e4:	82 ff       	sbrs	r24, 2
-     7e6:	eb c1       	rjmp	.+982    	; 0xbbe <process_message+0x648>
-     7e8:	91 e0       	ldi	r25, 0x01	; 1
-     7ea:	90 93 16 01 	sts	0x0116, r25	; 0x800116 <vibe_enable>
-     7ee:	83 fd       	sbrc	r24, 3
-     7f0:	f8 c1       	rjmp	.+1008   	; 0xbe2 <process_message+0x66c>
-     7f2:	10 92 10 01 	sts	0x0110, r1	; 0x800110 <case_enable>
-     7f6:	84 e1       	ldi	r24, 0x14	; 20
-     7f8:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     7fc:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     800:	81 e0       	ldi	r24, 0x01	; 1
-     802:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     806:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     80a:	16 bc       	out	0x26, r1	; 38
-     80c:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     810:	82 60       	ori	r24, 0x02	; 2
-     812:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     816:	cd ce       	rjmp	.-614    	; 0x5b2 <process_message+0x3c>
-     818:	99 23       	and	r25, r25
-     81a:	31 f2       	breq	.-116    	; 0x7a8 <process_message+0x232>
-     81c:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     820:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     824:	81 30       	cpi	r24, 0x01	; 1
-     826:	61 f6       	brne	.-104    	; 0x7c0 <process_message+0x24a>
-     828:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
-     82c:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     830:	95 e1       	ldi	r25, 0x15	; 21
-     832:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     836:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     83a:	e3 cf       	rjmp	.-58     	; 0x802 <process_message+0x28c>
-     83c:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     840:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     844:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     848:	88 23       	and	r24, r24
-     84a:	89 f1       	breq	.+98     	; 0x8ae <process_message+0x338>
-     84c:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     850:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     854:	81 30       	cpi	r24, 0x01	; 1
-     856:	99 f1       	breq	.+102    	; 0x8be <process_message+0x348>
-     858:	90 91 1f 01 	lds	r25, 0x011F	; 0x80011f <rcv_char>
-     85c:	80 91 0f 01 	lds	r24, 0x010F	; 0x80010f <flags>
-     860:	89 2b       	or	r24, r25
-     862:	80 93 0f 01 	sts	0x010F, r24	; 0x80010f <flags>
-     866:	80 ff       	sbrs	r24, 0
-     868:	b9 c1       	rjmp	.+882    	; 0xbdc <process_message+0x666>
-     86a:	91 e0       	ldi	r25, 0x01	; 1
-     86c:	90 93 1e 01 	sts	0x011E, r25	; 0x80011e <light_enable>
-     870:	81 ff       	sbrs	r24, 1
-     872:	b1 c1       	rjmp	.+866    	; 0xbd6 <process_message+0x660>
-     874:	91 e0       	ldi	r25, 0x01	; 1
-     876:	90 93 20 01 	sts	0x0120, r25	; 0x800120 <temp_enable>
-     87a:	82 ff       	sbrs	r24, 2
-     87c:	a9 c1       	rjmp	.+850    	; 0xbd0 <process_message+0x65a>
-     87e:	91 e0       	ldi	r25, 0x01	; 1
-     880:	90 93 16 01 	sts	0x0116, r25	; 0x800116 <vibe_enable>
-     884:	83 fd       	sbrc	r24, 3
-     886:	b1 c1       	rjmp	.+866    	; 0xbea <process_message+0x674>
-     888:	10 92 10 01 	sts	0x0110, r1	; 0x800110 <case_enable>
-     88c:	84 e1       	ldi	r24, 0x14	; 20
-     88e:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     892:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     896:	81 e0       	ldi	r24, 0x01	; 1
-     898:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     89c:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     8a0:	16 bc       	out	0x26, r1	; 38
-     8a2:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     8a6:	82 60       	ori	r24, 0x02	; 2
-     8a8:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     8ac:	7d ce       	rjmp	.-774    	; 0x5a8 <process_message+0x32>
-     8ae:	99 23       	and	r25, r25
-     8b0:	39 f2       	breq	.-114    	; 0x840 <process_message+0x2ca>
-     8b2:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     8b6:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     8ba:	81 30       	cpi	r24, 0x01	; 1
-     8bc:	69 f6       	brne	.-102    	; 0x858 <process_message+0x2e2>
-     8be:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
-     8c2:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     8c6:	95 e1       	ldi	r25, 0x15	; 21
-     8c8:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     8cc:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     8d0:	e3 cf       	rjmp	.-58     	; 0x898 <process_message+0x322>
-     8d2:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     8d6:	81 e0       	ldi	r24, 0x01	; 1
-     8d8:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <vibe_status>
-     8dc:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     8e0:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     8e4:	88 23       	and	r24, r24
-     8e6:	c9 f1       	breq	.+114    	; 0x95a <process_message+0x3e4>
-     8e8:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     8ec:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     8f0:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     8f4:	91 30       	cpi	r25, 0x01	; 1
-     8f6:	09 f4       	brne	.+2      	; 0x8fa <process_message+0x384>
-     8f8:	08 c1       	rjmp	.+528    	; 0xb0a <process_message+0x594>
-     8fa:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     8fe:	90 e0       	ldi	r25, 0x00	; 0
-     900:	38 2f       	mov	r19, r24
-     902:	22 27       	eor	r18, r18
-     904:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     908:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     90c:	88 23       	and	r24, r24
-     90e:	49 f1       	breq	.+82     	; 0x962 <process_message+0x3ec>
-     910:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     914:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     918:	81 11       	cpse	r24, r1
-     91a:	2b c0       	rjmp	.+86     	; 0x972 <process_message+0x3fc>
-     91c:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     920:	40 91 34 01 	lds	r20, 0x0134	; 0x800134 <vibe_status>
-     924:	44 23       	and	r20, r20
-     926:	09 f4       	brne	.+2      	; 0x92a <process_message+0x3b4>
-     928:	3a ce       	rjmp	.-908    	; 0x59e <process_message+0x28>
-     92a:	20 93 1d 01 	sts	0x011D, r18	; 0x80011d <vibe_lo_thresh>
-     92e:	80 93 12 01 	sts	0x0112, r24	; 0x800112 <vibe_hi_thresh>
-     932:	10 92 34 01 	sts	0x0134, r1	; 0x800134 <vibe_status>
-     936:	8f db       	rcall	.-2274   	; 0x56 <adx_setup>
-     938:	84 e1       	ldi	r24, 0x14	; 20
-     93a:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     93e:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     942:	81 e0       	ldi	r24, 0x01	; 1
-     944:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     948:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     94c:	16 bc       	out	0x26, r1	; 38
-     94e:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     952:	82 60       	ori	r24, 0x02	; 2
-     954:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     958:	22 ce       	rjmp	.-956    	; 0x59e <process_message+0x28>
-     95a:	99 23       	and	r25, r25
-     95c:	09 f4       	brne	.+2      	; 0x960 <process_message+0x3ea>
-     95e:	be cf       	rjmp	.-132    	; 0x8dc <process_message+0x366>
-     960:	c3 cf       	rjmp	.-122    	; 0x8e8 <process_message+0x372>
-     962:	99 23       	and	r25, r25
-     964:	79 f2       	breq	.-98     	; 0x904 <process_message+0x38e>
-     966:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     96a:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     96e:	88 23       	and	r24, r24
-     970:	a9 f2       	breq	.-86     	; 0x91c <process_message+0x3a6>
-     972:	10 92 34 01 	sts	0x0134, r1	; 0x800134 <vibe_status>
-     976:	85 e1       	ldi	r24, 0x15	; 21
-     978:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     97c:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     980:	81 e0       	ldi	r24, 0x01	; 1
-     982:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     986:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     98a:	16 bc       	out	0x26, r1	; 38
-     98c:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     990:	82 60       	ori	r24, 0x02	; 2
-     992:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     996:	80 e0       	ldi	r24, 0x00	; 0
-     998:	90 e0       	ldi	r25, 0x00	; 0
-     99a:	c2 cf       	rjmp	.-124    	; 0x920 <process_message+0x3aa>
-     99c:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     9a0:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     9a4:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     9a8:	88 23       	and	r24, r24
-     9aa:	f9 f0       	breq	.+62     	; 0x9ea <process_message+0x474>
-     9ac:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     9b0:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     9b4:	81 30       	cpi	r24, 0x01	; 1
-     9b6:	09 f4       	brne	.+2      	; 0x9ba <process_message+0x444>
-     9b8:	bd c0       	rjmp	.+378    	; 0xb34 <process_message+0x5be>
-     9ba:	84 e1       	ldi	r24, 0x14	; 20
-     9bc:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     9c0:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     9c4:	81 e0       	ldi	r24, 0x01	; 1
-     9c6:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     9ca:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     9ce:	16 bc       	out	0x26, r1	; 38
-     9d0:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     9d4:	82 60       	ori	r24, 0x02	; 2
-     9d6:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     9da:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     9de:	90 e0       	ldi	r25, 0x00	; 0
-     9e0:	90 93 36 01 	sts	0x0136, r25	; 0x800136 <temp_hi_thresh+0x1>
-     9e4:	80 93 35 01 	sts	0x0135, r24	; 0x800135 <temp_hi_thresh>
-     9e8:	d5 cd       	rjmp	.-1110   	; 0x594 <process_message+0x1e>
-     9ea:	99 23       	and	r25, r25
-     9ec:	c9 f2       	breq	.-78     	; 0x9a0 <process_message+0x42a>
-     9ee:	de cf       	rjmp	.-68     	; 0x9ac <process_message+0x436>
-     9f0:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     9f4:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     9f8:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     9fc:	88 23       	and	r24, r24
-     9fe:	f9 f0       	breq	.+62     	; 0xa3e <process_message+0x4c8>
-     a00:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     a04:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     a08:	81 30       	cpi	r24, 0x01	; 1
-     a0a:	09 f4       	brne	.+2      	; 0xa0e <process_message+0x498>
-     a0c:	be c0       	rjmp	.+380    	; 0xb8a <process_message+0x614>
-     a0e:	84 e1       	ldi	r24, 0x14	; 20
-     a10:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     a14:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     a18:	81 e0       	ldi	r24, 0x01	; 1
-     a1a:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     a1e:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     a22:	16 bc       	out	0x26, r1	; 38
-     a24:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     a28:	82 60       	ori	r24, 0x02	; 2
-     a2a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     a2e:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     a32:	90 e0       	ldi	r25, 0x00	; 0
-     a34:	90 93 36 01 	sts	0x0136, r25	; 0x800136 <temp_hi_thresh+0x1>
-     a38:	80 93 35 01 	sts	0x0135, r24	; 0x800135 <temp_hi_thresh>
-     a3c:	a6 cd       	rjmp	.-1204   	; 0x58a <process_message+0x14>
-     a3e:	99 23       	and	r25, r25
-     a40:	c9 f2       	breq	.-78     	; 0x9f4 <process_message+0x47e>
-     a42:	de cf       	rjmp	.-68     	; 0xa00 <process_message+0x48a>
-     a44:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     a48:	81 e0       	ldi	r24, 0x01	; 1
-     a4a:	80 93 25 01 	sts	0x0125, r24	; 0x800125 <light_status>
-     a4e:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     a52:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     a56:	88 23       	and	r24, r24
-     a58:	c9 f1       	breq	.+114    	; 0xacc <process_message+0x556>
-     a5a:	20 91 1f 01 	lds	r18, 0x011F	; 0x80011f <rcv_char>
-     a5e:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     a62:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     a66:	81 30       	cpi	r24, 0x01	; 1
-     a68:	09 f4       	brne	.+2      	; 0xa6c <process_message+0x4f6>
-     a6a:	78 c0       	rjmp	.+240    	; 0xb5c <process_message+0x5e6>
-     a6c:	20 91 1f 01 	lds	r18, 0x011F	; 0x80011f <rcv_char>
-     a70:	30 e0       	ldi	r19, 0x00	; 0
-     a72:	32 2f       	mov	r19, r18
-     a74:	22 27       	eor	r18, r18
-     a76:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     a7a:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
-     a7e:	88 23       	and	r24, r24
-     a80:	49 f1       	breq	.+82     	; 0xad4 <process_message+0x55e>
-     a82:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     a86:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     a8a:	81 11       	cpse	r24, r1
-     a8c:	2b c0       	rjmp	.+86     	; 0xae4 <process_message+0x56e>
-     a8e:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <rcv_char>
-     a92:	28 2b       	or	r18, r24
-     a94:	80 91 25 01 	lds	r24, 0x0125	; 0x800125 <light_status>
-     a98:	88 23       	and	r24, r24
-     a9a:	09 f4       	brne	.+2      	; 0xa9e <process_message+0x528>
-     a9c:	71 cd       	rjmp	.-1310   	; 0x580 <process_message+0xa>
-     a9e:	30 93 31 01 	sts	0x0131, r19	; 0x800131 <light_thresh+0x1>
-     aa2:	20 93 30 01 	sts	0x0130, r18	; 0x800130 <light_thresh>
-     aa6:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     aaa:	84 e1       	ldi	r24, 0x14	; 20
-     aac:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     ab0:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     ab4:	81 e0       	ldi	r24, 0x01	; 1
-     ab6:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     aba:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     abe:	16 bc       	out	0x26, r1	; 38
-     ac0:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     ac4:	82 60       	ori	r24, 0x02	; 2
-     ac6:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     aca:	5a cd       	rjmp	.-1356   	; 0x580 <process_message+0xa>
-     acc:	99 23       	and	r25, r25
-     ace:	09 f4       	brne	.+2      	; 0xad2 <process_message+0x55c>
-     ad0:	be cf       	rjmp	.-132    	; 0xa4e <process_message+0x4d8>
-     ad2:	c3 cf       	rjmp	.-122    	; 0xa5a <process_message+0x4e4>
-     ad4:	99 23       	and	r25, r25
-     ad6:	79 f2       	breq	.-98     	; 0xa76 <process_message+0x500>
-     ad8:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
-     adc:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
-     ae0:	88 23       	and	r24, r24
-     ae2:	a9 f2       	breq	.-86     	; 0xa8e <process_message+0x518>
-     ae4:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     ae8:	85 e1       	ldi	r24, 0x15	; 21
-     aea:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     aee:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     af2:	81 e0       	ldi	r24, 0x01	; 1
-     af4:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     af8:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     afc:	16 bc       	out	0x26, r1	; 38
-     afe:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b02:	82 60       	ori	r24, 0x02	; 2
-     b04:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b08:	c5 cf       	rjmp	.-118    	; 0xa94 <process_message+0x51e>
-     b0a:	28 2f       	mov	r18, r24
-     b0c:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
-     b10:	10 92 34 01 	sts	0x0134, r1	; 0x800134 <vibe_status>
-     b14:	85 e1       	ldi	r24, 0x15	; 21
-     b16:	80 93 33 01 	sts	0x0133, r24	; 0x800133 <tx_char>
-     b1a:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     b1e:	90 93 18 01 	sts	0x0118, r25	; 0x800118 <start_bit>
-     b22:	90 93 17 01 	sts	0x0117, r25	; 0x800117 <sending>
-     b26:	16 bc       	out	0x26, r1	; 38
-     b28:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b2c:	82 60       	ori	r24, 0x02	; 2
-     b2e:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b32:	e8 ce       	rjmp	.-560    	; 0x904 <process_message+0x38e>
-     b34:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
-     b38:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     b3c:	95 e1       	ldi	r25, 0x15	; 21
-     b3e:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     b42:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     b46:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     b4a:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     b4e:	16 bc       	out	0x26, r1	; 38
-     b50:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b54:	82 60       	ori	r24, 0x02	; 2
-     b56:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b5a:	1c cd       	rjmp	.-1480   	; 0x594 <process_message+0x1e>
-     b5c:	30 e0       	ldi	r19, 0x00	; 0
-     b5e:	32 2f       	mov	r19, r18
-     b60:	22 27       	eor	r18, r18
-     b62:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
-     b66:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     b6a:	95 e1       	ldi	r25, 0x15	; 21
-     b6c:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     b70:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     b74:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     b78:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     b7c:	16 bc       	out	0x26, r1	; 38
-     b7e:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b82:	82 60       	ori	r24, 0x02	; 2
-     b84:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     b88:	76 cf       	rjmp	.-276    	; 0xa76 <process_message+0x500>
-     b8a:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
-     b8e:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <light_status>
-     b92:	95 e1       	ldi	r25, 0x15	; 21
-     b94:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     b98:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     b9c:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
-     ba0:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <sending>
-     ba4:	16 bc       	out	0x26, r1	; 38
-     ba6:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     baa:	82 60       	ori	r24, 0x02	; 2
-     bac:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     bb0:	ec cc       	rjmp	.-1576   	; 0x58a <process_message+0x14>
-     bb2:	95 e1       	ldi	r25, 0x15	; 21
-     bb4:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <tx_char>
-     bb8:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
-     bbc:	1f cd       	rjmp	.-1474   	; 0x5fc <process_message+0x86>
-     bbe:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <vibe_enable>
-     bc2:	15 ce       	rjmp	.-982    	; 0x7ee <process_message+0x278>
-     bc4:	10 92 20 01 	sts	0x0120, r1	; 0x800120 <temp_enable>
-     bc8:	0d ce       	rjmp	.-998    	; 0x7e4 <process_message+0x26e>
-     bca:	10 92 1e 01 	sts	0x011E, r1	; 0x80011e <light_enable>
-     bce:	05 ce       	rjmp	.-1014   	; 0x7da <process_message+0x264>
-     bd0:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <vibe_enable>
-     bd4:	57 ce       	rjmp	.-850    	; 0x884 <process_message+0x30e>
-     bd6:	10 92 20 01 	sts	0x0120, r1	; 0x800120 <temp_enable>
-     bda:	4f ce       	rjmp	.-866    	; 0x87a <process_message+0x304>
-     bdc:	10 92 1e 01 	sts	0x011E, r1	; 0x80011e <light_enable>
-     be0:	47 ce       	rjmp	.-882    	; 0x870 <process_message+0x2fa>
-     be2:	81 e0       	ldi	r24, 0x01	; 1
-     be4:	80 93 10 01 	sts	0x0110, r24	; 0x800110 <case_enable>
-     be8:	06 ce       	rjmp	.-1012   	; 0x7f6 <process_message+0x280>
-     bea:	81 e0       	ldi	r24, 0x01	; 1
-     bec:	80 93 10 01 	sts	0x0110, r24	; 0x800110 <case_enable>
-     bf0:	4d ce       	rjmp	.-870    	; 0x88c <process_message+0x316>
+     610:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     614:	81 11       	cpse	r24, r1
+     616:	fc cf       	rjmp	.-8      	; 0x610 <process_message+0x9a>
+     618:	08 95       	ret
+     61a:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     61e:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <fault_code>
+     622:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     626:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     62a:	81 e0       	ldi	r24, 0x01	; 1
+     62c:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     630:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     634:	16 bc       	out	0x26, r1	; 38
+     636:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     63a:	82 60       	ori	r24, 0x02	; 2
+     63c:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     640:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     644:	81 11       	cpse	r24, r1
+     646:	fc cf       	rjmp	.-8      	; 0x640 <process_message+0xca>
+     648:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <fault_value1>
+     64c:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     650:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     654:	81 e0       	ldi	r24, 0x01	; 1
+     656:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     65a:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     65e:	16 bc       	out	0x26, r1	; 38
+     660:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     664:	82 60       	ori	r24, 0x02	; 2
+     666:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     66a:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     66e:	81 11       	cpse	r24, r1
+     670:	fc cf       	rjmp	.-8      	; 0x66a <process_message+0xf4>
+     672:	80 91 06 01 	lds	r24, 0x0106	; 0x800106 <fault_value2>
+     676:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     67a:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     67e:	81 e0       	ldi	r24, 0x01	; 1
+     680:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     684:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     688:	16 bc       	out	0x26, r1	; 38
+     68a:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     68e:	82 60       	ori	r24, 0x02	; 2
+     690:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     694:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     698:	81 11       	cpse	r24, r1
+     69a:	fc cf       	rjmp	.-8      	; 0x694 <process_message+0x11e>
+     69c:	84 e1       	ldi	r24, 0x14	; 20
+     69e:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     6a2:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     6a6:	81 e0       	ldi	r24, 0x01	; 1
+     6a8:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     6ac:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     6b0:	16 bc       	out	0x26, r1	; 38
+     6b2:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     6b6:	82 60       	ori	r24, 0x02	; 2
+     6b8:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     6bc:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     6c0:	81 11       	cpse	r24, r1
+     6c2:	fc cf       	rjmp	.-8      	; 0x6bc <process_message+0x146>
+     6c4:	89 cf       	rjmp	.-238    	; 0x5d8 <process_message+0x62>
+     6c6:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     6ca:	16 9a       	sbi	0x02, 6	; 2
+     6cc:	17 98       	cbi	0x02, 7	; 2
+     6ce:	85 e5       	ldi	r24, 0x55	; 85
+     6d0:	80 93 0e 01 	sts	0x010E, r24	; 0x80010e <configured>
+     6d4:	84 e1       	ldi	r24, 0x14	; 20
+     6d6:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     6da:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     6de:	81 e0       	ldi	r24, 0x01	; 1
+     6e0:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     6e4:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     6e8:	16 bc       	out	0x26, r1	; 38
+     6ea:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     6ee:	82 60       	ori	r24, 0x02	; 2
+     6f0:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     6f4:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     6f8:	81 11       	cpse	r24, r1
+     6fa:	fc cf       	rjmp	.-8      	; 0x6f4 <process_message+0x17e>
+     6fc:	69 cf       	rjmp	.-302    	; 0x5d0 <process_message+0x5a>
+     6fe:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     702:	80 91 1a 01 	lds	r24, 0x011A	; 0x80011a <temperature>
+     706:	90 91 1b 01 	lds	r25, 0x011B	; 0x80011b <temperature+0x1>
+     70a:	10 92 34 01 	sts	0x0134, r1	; 0x800134 <tx_char>
+     70e:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     712:	81 e0       	ldi	r24, 0x01	; 1
+     714:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     718:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     71c:	16 bc       	out	0x26, r1	; 38
+     71e:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     722:	82 60       	ori	r24, 0x02	; 2
+     724:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     728:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     72c:	81 11       	cpse	r24, r1
+     72e:	fc cf       	rjmp	.-8      	; 0x728 <process_message+0x1b2>
+     730:	80 91 1a 01 	lds	r24, 0x011A	; 0x80011a <temperature>
+     734:	90 91 1b 01 	lds	r25, 0x011B	; 0x80011b <temperature+0x1>
+     738:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     73c:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     740:	81 e0       	ldi	r24, 0x01	; 1
+     742:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     746:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     74a:	16 bc       	out	0x26, r1	; 38
+     74c:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     750:	82 60       	ori	r24, 0x02	; 2
+     752:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     756:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     75a:	81 11       	cpse	r24, r1
+     75c:	fc cf       	rjmp	.-8      	; 0x756 <process_message+0x1e0>
+     75e:	84 e1       	ldi	r24, 0x14	; 20
+     760:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     764:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     768:	81 e0       	ldi	r24, 0x01	; 1
+     76a:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     76e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     772:	16 bc       	out	0x26, r1	; 38
+     774:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     778:	82 60       	ori	r24, 0x02	; 2
+     77a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     77e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     782:	81 11       	cpse	r24, r1
+     784:	fc cf       	rjmp	.-8      	; 0x77e <process_message+0x208>
+     786:	1f cf       	rjmp	.-450    	; 0x5c6 <process_message+0x50>
+     788:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     78c:	80 91 1c 01 	lds	r24, 0x011C	; 0x80011c <light>
+     790:	90 91 1d 01 	lds	r25, 0x011D	; 0x80011d <light+0x1>
+     794:	10 92 34 01 	sts	0x0134, r1	; 0x800134 <tx_char>
+     798:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     79c:	81 e0       	ldi	r24, 0x01	; 1
+     79e:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     7a2:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     7a6:	16 bc       	out	0x26, r1	; 38
+     7a8:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     7ac:	82 60       	ori	r24, 0x02	; 2
+     7ae:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     7b2:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     7b6:	81 11       	cpse	r24, r1
+     7b8:	fc cf       	rjmp	.-8      	; 0x7b2 <process_message+0x23c>
+     7ba:	80 91 1c 01 	lds	r24, 0x011C	; 0x80011c <light>
+     7be:	90 91 1d 01 	lds	r25, 0x011D	; 0x80011d <light+0x1>
+     7c2:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     7c6:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     7ca:	81 e0       	ldi	r24, 0x01	; 1
+     7cc:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     7d0:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     7d4:	16 bc       	out	0x26, r1	; 38
+     7d6:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     7da:	82 60       	ori	r24, 0x02	; 2
+     7dc:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     7e0:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     7e4:	81 11       	cpse	r24, r1
+     7e6:	fc cf       	rjmp	.-8      	; 0x7e0 <process_message+0x26a>
+     7e8:	84 e1       	ldi	r24, 0x14	; 20
+     7ea:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     7ee:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     7f2:	81 e0       	ldi	r24, 0x01	; 1
+     7f4:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     7f8:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     7fc:	16 bc       	out	0x26, r1	; 38
+     7fe:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     802:	82 60       	ori	r24, 0x02	; 2
+     804:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     808:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     80c:	81 11       	cpse	r24, r1
+     80e:	fc cf       	rjmp	.-8      	; 0x808 <process_message+0x292>
+     810:	d5 ce       	rjmp	.-598    	; 0x5bc <process_message+0x46>
+     812:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     816:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     81a:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     81e:	88 23       	and	r24, r24
+     820:	b1 f1       	breq	.+108    	; 0x88e <process_message+0x318>
+     822:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     826:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     82a:	81 30       	cpi	r24, 0x01	; 1
+     82c:	c1 f1       	breq	.+112    	; 0x89e <process_message+0x328>
+     82e:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
+     832:	80 95       	com	r24
+     834:	90 91 0f 01 	lds	r25, 0x010F	; 0x80010f <flags>
+     838:	89 23       	and	r24, r25
+     83a:	80 93 0f 01 	sts	0x010F, r24	; 0x80010f <flags>
+     83e:	80 ff       	sbrs	r24, 0
+     840:	51 c2       	rjmp	.+1186   	; 0xce4 <process_message+0x76e>
+     842:	91 e0       	ldi	r25, 0x01	; 1
+     844:	90 93 1f 01 	sts	0x011F, r25	; 0x80011f <light_enable>
+     848:	81 ff       	sbrs	r24, 1
+     84a:	49 c2       	rjmp	.+1170   	; 0xcde <process_message+0x768>
+     84c:	91 e0       	ldi	r25, 0x01	; 1
+     84e:	90 93 21 01 	sts	0x0121, r25	; 0x800121 <temp_enable>
+     852:	82 ff       	sbrs	r24, 2
+     854:	41 c2       	rjmp	.+1154   	; 0xcd8 <process_message+0x762>
+     856:	91 e0       	ldi	r25, 0x01	; 1
+     858:	90 93 17 01 	sts	0x0117, r25	; 0x800117 <vibe_enable>
+     85c:	83 fd       	sbrc	r24, 3
+     85e:	4e c2       	rjmp	.+1180   	; 0xcfc <process_message+0x786>
+     860:	10 92 10 01 	sts	0x0110, r1	; 0x800110 <case_enable>
+     864:	84 e1       	ldi	r24, 0x14	; 20
+     866:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     86a:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     86e:	81 e0       	ldi	r24, 0x01	; 1
+     870:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     874:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     878:	16 bc       	out	0x26, r1	; 38
+     87a:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     87e:	82 60       	ori	r24, 0x02	; 2
+     880:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     884:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     888:	81 11       	cpse	r24, r1
+     88a:	fc cf       	rjmp	.-8      	; 0x884 <process_message+0x30e>
+     88c:	92 ce       	rjmp	.-732    	; 0x5b2 <process_message+0x3c>
+     88e:	99 23       	and	r25, r25
+     890:	11 f2       	breq	.-124    	; 0x816 <process_message+0x2a0>
+     892:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     896:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     89a:	81 30       	cpi	r24, 0x01	; 1
+     89c:	41 f6       	brne	.-112    	; 0x82e <process_message+0x2b8>
+     89e:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
+     8a2:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     8a6:	95 e1       	ldi	r25, 0x15	; 21
+     8a8:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     8ac:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     8b0:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     8b4:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     8b8:	16 bc       	out	0x26, r1	; 38
+     8ba:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     8be:	82 60       	ori	r24, 0x02	; 2
+     8c0:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     8c4:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     8c8:	81 11       	cpse	r24, r1
+     8ca:	fc cf       	rjmp	.-8      	; 0x8c4 <process_message+0x34e>
+     8cc:	72 ce       	rjmp	.-796    	; 0x5b2 <process_message+0x3c>
+     8ce:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     8d2:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     8d6:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     8da:	88 23       	and	r24, r24
+     8dc:	a9 f1       	breq	.+106    	; 0x948 <process_message+0x3d2>
+     8de:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     8e2:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     8e6:	81 30       	cpi	r24, 0x01	; 1
+     8e8:	b9 f1       	breq	.+110    	; 0x958 <process_message+0x3e2>
+     8ea:	90 91 20 01 	lds	r25, 0x0120	; 0x800120 <rcv_char>
+     8ee:	80 91 0f 01 	lds	r24, 0x010F	; 0x80010f <flags>
+     8f2:	89 2b       	or	r24, r25
+     8f4:	80 93 0f 01 	sts	0x010F, r24	; 0x80010f <flags>
+     8f8:	80 ff       	sbrs	r24, 0
+     8fa:	fd c1       	rjmp	.+1018   	; 0xcf6 <process_message+0x780>
+     8fc:	91 e0       	ldi	r25, 0x01	; 1
+     8fe:	90 93 1f 01 	sts	0x011F, r25	; 0x80011f <light_enable>
+     902:	81 ff       	sbrs	r24, 1
+     904:	f5 c1       	rjmp	.+1002   	; 0xcf0 <process_message+0x77a>
+     906:	91 e0       	ldi	r25, 0x01	; 1
+     908:	90 93 21 01 	sts	0x0121, r25	; 0x800121 <temp_enable>
+     90c:	82 ff       	sbrs	r24, 2
+     90e:	ed c1       	rjmp	.+986    	; 0xcea <process_message+0x774>
+     910:	91 e0       	ldi	r25, 0x01	; 1
+     912:	90 93 17 01 	sts	0x0117, r25	; 0x800117 <vibe_enable>
+     916:	83 fd       	sbrc	r24, 3
+     918:	f5 c1       	rjmp	.+1002   	; 0xd04 <process_message+0x78e>
+     91a:	10 92 10 01 	sts	0x0110, r1	; 0x800110 <case_enable>
+     91e:	84 e1       	ldi	r24, 0x14	; 20
+     920:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     924:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     928:	81 e0       	ldi	r24, 0x01	; 1
+     92a:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     92e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     932:	16 bc       	out	0x26, r1	; 38
+     934:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     938:	82 60       	ori	r24, 0x02	; 2
+     93a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     93e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     942:	81 11       	cpse	r24, r1
+     944:	fc cf       	rjmp	.-8      	; 0x93e <process_message+0x3c8>
+     946:	30 ce       	rjmp	.-928    	; 0x5a8 <process_message+0x32>
+     948:	99 23       	and	r25, r25
+     94a:	19 f2       	breq	.-122    	; 0x8d2 <process_message+0x35c>
+     94c:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     950:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     954:	81 30       	cpi	r24, 0x01	; 1
+     956:	49 f6       	brne	.-110    	; 0x8ea <process_message+0x374>
+     958:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
+     95c:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     960:	95 e1       	ldi	r25, 0x15	; 21
+     962:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     966:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     96a:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     96e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     972:	16 bc       	out	0x26, r1	; 38
+     974:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     978:	82 60       	ori	r24, 0x02	; 2
+     97a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     97e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     982:	81 11       	cpse	r24, r1
+     984:	fc cf       	rjmp	.-8      	; 0x97e <process_message+0x408>
+     986:	10 ce       	rjmp	.-992    	; 0x5a8 <process_message+0x32>
+     988:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     98c:	81 e0       	ldi	r24, 0x01	; 1
+     98e:	80 93 35 01 	sts	0x0135, r24	; 0x800135 <vibe_status>
+     992:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     996:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     99a:	88 23       	and	r24, r24
+     99c:	e9 f1       	breq	.+122    	; 0xa18 <process_message+0x4a2>
+     99e:	20 91 20 01 	lds	r18, 0x0120	; 0x800120 <rcv_char>
+     9a2:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     9a6:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     9aa:	81 30       	cpi	r24, 0x01	; 1
+     9ac:	09 f4       	brne	.+2      	; 0x9b0 <process_message+0x43a>
+     9ae:	34 c1       	rjmp	.+616    	; 0xc18 <process_message+0x6a2>
+     9b0:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
+     9b4:	90 e0       	ldi	r25, 0x00	; 0
+     9b6:	38 2f       	mov	r19, r24
+     9b8:	22 27       	eor	r18, r18
+     9ba:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     9be:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     9c2:	88 23       	and	r24, r24
+     9c4:	69 f1       	breq	.+90     	; 0xa20 <process_message+0x4aa>
+     9c6:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     9ca:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     9ce:	81 11       	cpse	r24, r1
+     9d0:	2f c0       	rjmp	.+94     	; 0xa30 <process_message+0x4ba>
+     9d2:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
+     9d6:	40 91 35 01 	lds	r20, 0x0135	; 0x800135 <vibe_status>
+     9da:	44 23       	and	r20, r20
+     9dc:	09 f4       	brne	.+2      	; 0x9e0 <process_message+0x46a>
+     9de:	df cd       	rjmp	.-1090   	; 0x59e <process_message+0x28>
+     9e0:	20 93 1e 01 	sts	0x011E, r18	; 0x80011e <vibe_lo_thresh>
+     9e4:	80 93 12 01 	sts	0x0112, r24	; 0x800112 <vibe_hi_thresh>
+     9e8:	10 92 35 01 	sts	0x0135, r1	; 0x800135 <vibe_status>
+     9ec:	34 db       	rcall	.-2456   	; 0x56 <adx_setup>
+     9ee:	84 e1       	ldi	r24, 0x14	; 20
+     9f0:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     9f4:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     9f8:	81 e0       	ldi	r24, 0x01	; 1
+     9fa:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     9fe:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     a02:	16 bc       	out	0x26, r1	; 38
+     a04:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     a08:	82 60       	ori	r24, 0x02	; 2
+     a0a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     a0e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     a12:	81 11       	cpse	r24, r1
+     a14:	fc cf       	rjmp	.-8      	; 0xa0e <process_message+0x498>
+     a16:	c3 cd       	rjmp	.-1146   	; 0x59e <process_message+0x28>
+     a18:	99 23       	and	r25, r25
+     a1a:	09 f4       	brne	.+2      	; 0xa1e <process_message+0x4a8>
+     a1c:	ba cf       	rjmp	.-140    	; 0x992 <process_message+0x41c>
+     a1e:	bf cf       	rjmp	.-130    	; 0x99e <process_message+0x428>
+     a20:	99 23       	and	r25, r25
+     a22:	59 f2       	breq	.-106    	; 0x9ba <process_message+0x444>
+     a24:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     a28:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     a2c:	88 23       	and	r24, r24
+     a2e:	89 f2       	breq	.-94     	; 0x9d2 <process_message+0x45c>
+     a30:	10 92 35 01 	sts	0x0135, r1	; 0x800135 <vibe_status>
+     a34:	85 e1       	ldi	r24, 0x15	; 21
+     a36:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     a3a:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     a3e:	81 e0       	ldi	r24, 0x01	; 1
+     a40:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     a44:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     a48:	16 bc       	out	0x26, r1	; 38
+     a4a:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     a4e:	82 60       	ori	r24, 0x02	; 2
+     a50:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     a54:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     a58:	81 11       	cpse	r24, r1
+     a5a:	fc cf       	rjmp	.-8      	; 0xa54 <process_message+0x4de>
+     a5c:	80 e0       	ldi	r24, 0x00	; 0
+     a5e:	90 e0       	ldi	r25, 0x00	; 0
+     a60:	ba cf       	rjmp	.-140    	; 0x9d6 <process_message+0x460>
+     a62:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     a66:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     a6a:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     a6e:	88 23       	and	r24, r24
+     a70:	19 f1       	breq	.+70     	; 0xab8 <process_message+0x542>
+     a72:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     a76:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     a7a:	81 30       	cpi	r24, 0x01	; 1
+     a7c:	09 f4       	brne	.+2      	; 0xa80 <process_message+0x50a>
+     a7e:	e4 c0       	rjmp	.+456    	; 0xc48 <process_message+0x6d2>
+     a80:	84 e1       	ldi	r24, 0x14	; 20
+     a82:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     a86:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     a8a:	81 e0       	ldi	r24, 0x01	; 1
+     a8c:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     a90:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     a94:	16 bc       	out	0x26, r1	; 38
+     a96:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     a9a:	82 60       	ori	r24, 0x02	; 2
+     a9c:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     aa0:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     aa4:	81 11       	cpse	r24, r1
+     aa6:	fc cf       	rjmp	.-8      	; 0xaa0 <process_message+0x52a>
+     aa8:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
+     aac:	90 e0       	ldi	r25, 0x00	; 0
+     aae:	90 93 37 01 	sts	0x0137, r25	; 0x800137 <temp_hi_thresh+0x1>
+     ab2:	80 93 36 01 	sts	0x0136, r24	; 0x800136 <temp_hi_thresh>
+     ab6:	6e cd       	rjmp	.-1316   	; 0x594 <process_message+0x1e>
+     ab8:	99 23       	and	r25, r25
+     aba:	a9 f2       	breq	.-86     	; 0xa66 <process_message+0x4f0>
+     abc:	da cf       	rjmp	.-76     	; 0xa72 <process_message+0x4fc>
+     abe:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     ac2:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     ac6:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     aca:	88 23       	and	r24, r24
+     acc:	19 f1       	breq	.+70     	; 0xb14 <process_message+0x59e>
+     ace:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     ad2:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     ad6:	81 30       	cpi	r24, 0x01	; 1
+     ad8:	09 f4       	brne	.+2      	; 0xadc <process_message+0x566>
+     ada:	e6 c0       	rjmp	.+460    	; 0xca8 <process_message+0x732>
+     adc:	84 e1       	ldi	r24, 0x14	; 20
+     ade:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     ae2:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     ae6:	81 e0       	ldi	r24, 0x01	; 1
+     ae8:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     aec:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     af0:	16 bc       	out	0x26, r1	; 38
+     af2:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     af6:	82 60       	ori	r24, 0x02	; 2
+     af8:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     afc:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     b00:	81 11       	cpse	r24, r1
+     b02:	fc cf       	rjmp	.-8      	; 0xafc <process_message+0x586>
+     b04:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
+     b08:	90 e0       	ldi	r25, 0x00	; 0
+     b0a:	90 93 37 01 	sts	0x0137, r25	; 0x800137 <temp_hi_thresh+0x1>
+     b0e:	80 93 36 01 	sts	0x0136, r24	; 0x800136 <temp_hi_thresh>
+     b12:	3b cd       	rjmp	.-1418   	; 0x58a <process_message+0x14>
+     b14:	99 23       	and	r25, r25
+     b16:	a9 f2       	breq	.-86     	; 0xac2 <process_message+0x54c>
+     b18:	da cf       	rjmp	.-76     	; 0xace <process_message+0x558>
+     b1a:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     b1e:	81 e0       	ldi	r24, 0x01	; 1
+     b20:	80 93 26 01 	sts	0x0126, r24	; 0x800126 <light_status>
+     b24:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     b28:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     b2c:	88 23       	and	r24, r24
+     b2e:	e9 f1       	breq	.+122    	; 0xbaa <process_message+0x634>
+     b30:	20 91 20 01 	lds	r18, 0x0120	; 0x800120 <rcv_char>
+     b34:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     b38:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     b3c:	81 30       	cpi	r24, 0x01	; 1
+     b3e:	09 f4       	brne	.+2      	; 0xb42 <process_message+0x5cc>
+     b40:	9b c0       	rjmp	.+310    	; 0xc78 <process_message+0x702>
+     b42:	20 91 20 01 	lds	r18, 0x0120	; 0x800120 <rcv_char>
+     b46:	30 e0       	ldi	r19, 0x00	; 0
+     b48:	32 2f       	mov	r19, r18
+     b4a:	22 27       	eor	r18, r18
+     b4c:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     b50:	90 91 13 01 	lds	r25, 0x0113	; 0x800113 <rcv_error_stop>
+     b54:	88 23       	and	r24, r24
+     b56:	69 f1       	breq	.+90     	; 0xbb2 <process_message+0x63c>
+     b58:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     b5c:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     b60:	81 11       	cpse	r24, r1
+     b62:	2f c0       	rjmp	.+94     	; 0xbc2 <process_message+0x64c>
+     b64:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <rcv_char>
+     b68:	28 2b       	or	r18, r24
+     b6a:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <light_status>
+     b6e:	88 23       	and	r24, r24
+     b70:	09 f4       	brne	.+2      	; 0xb74 <process_message+0x5fe>
+     b72:	06 cd       	rjmp	.-1524   	; 0x580 <process_message+0xa>
+     b74:	30 93 32 01 	sts	0x0132, r19	; 0x800132 <light_thresh+0x1>
+     b78:	20 93 31 01 	sts	0x0131, r18	; 0x800131 <light_thresh>
+     b7c:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     b80:	84 e1       	ldi	r24, 0x14	; 20
+     b82:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     b86:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     b8a:	81 e0       	ldi	r24, 0x01	; 1
+     b8c:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     b90:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     b94:	16 bc       	out	0x26, r1	; 38
+     b96:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     b9a:	82 60       	ori	r24, 0x02	; 2
+     b9c:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     ba0:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     ba4:	81 11       	cpse	r24, r1
+     ba6:	fc cf       	rjmp	.-8      	; 0xba0 <process_message+0x62a>
+     ba8:	eb cc       	rjmp	.-1578   	; 0x580 <process_message+0xa>
+     baa:	99 23       	and	r25, r25
+     bac:	09 f4       	brne	.+2      	; 0xbb0 <process_message+0x63a>
+     bae:	ba cf       	rjmp	.-140    	; 0xb24 <process_message+0x5ae>
+     bb0:	bf cf       	rjmp	.-130    	; 0xb30 <process_message+0x5ba>
+     bb2:	99 23       	and	r25, r25
+     bb4:	59 f2       	breq	.-106    	; 0xb4c <process_message+0x5d6>
+     bb6:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
+     bba:	80 91 13 01 	lds	r24, 0x0113	; 0x800113 <rcv_error_stop>
+     bbe:	88 23       	and	r24, r24
+     bc0:	89 f2       	breq	.-94     	; 0xb64 <process_message+0x5ee>
+     bc2:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     bc6:	85 e1       	ldi	r24, 0x15	; 21
+     bc8:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <tx_char>
+     bcc:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     bd0:	81 e0       	ldi	r24, 0x01	; 1
+     bd2:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     bd6:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     bda:	16 bc       	out	0x26, r1	; 38
+     bdc:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     be0:	82 60       	ori	r24, 0x02	; 2
+     be2:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     be6:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     bea:	81 11       	cpse	r24, r1
+     bec:	fc cf       	rjmp	.-8      	; 0xbe6 <process_message+0x670>
+     bee:	bd cf       	rjmp	.-134    	; 0xb6a <process_message+0x5f4>
+     bf0:	95 e1       	ldi	r25, 0x15	; 21
+     bf2:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     bf6:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     bfa:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     bfe:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     c02:	16 bc       	out	0x26, r1	; 38
+     c04:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c08:	82 60       	ori	r24, 0x02	; 2
+     c0a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c0e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     c12:	81 11       	cpse	r24, r1
+     c14:	fc cf       	rjmp	.-8      	; 0xc0e <process_message+0x698>
+     c16:	08 95       	ret
+     c18:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
+     c1c:	10 92 35 01 	sts	0x0135, r1	; 0x800135 <vibe_status>
+     c20:	95 e1       	ldi	r25, 0x15	; 21
+     c22:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     c26:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     c2a:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     c2e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     c32:	16 bc       	out	0x26, r1	; 38
+     c34:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c38:	82 60       	ori	r24, 0x02	; 2
+     c3a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c3e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     c42:	81 11       	cpse	r24, r1
+     c44:	fc cf       	rjmp	.-8      	; 0xc3e <process_message+0x6c8>
+     c46:	b9 ce       	rjmp	.-654    	; 0x9ba <process_message+0x444>
+     c48:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
+     c4c:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     c50:	95 e1       	ldi	r25, 0x15	; 21
+     c52:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     c56:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     c5a:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     c5e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     c62:	16 bc       	out	0x26, r1	; 38
+     c64:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c68:	82 60       	ori	r24, 0x02	; 2
+     c6a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c6e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     c72:	81 11       	cpse	r24, r1
+     c74:	fc cf       	rjmp	.-8      	; 0xc6e <process_message+0x6f8>
+     c76:	8e cc       	rjmp	.-1764   	; 0x594 <process_message+0x1e>
+     c78:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
+     c7c:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     c80:	95 e1       	ldi	r25, 0x15	; 21
+     c82:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     c86:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     c8a:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     c8e:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     c92:	16 bc       	out	0x26, r1	; 38
+     c94:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c98:	82 60       	ori	r24, 0x02	; 2
+     c9a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     c9e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     ca2:	81 11       	cpse	r24, r1
+     ca4:	fc cf       	rjmp	.-8      	; 0xc9e <process_message+0x728>
+     ca6:	4f cf       	rjmp	.-354    	; 0xb46 <process_message+0x5d0>
+     ca8:	10 92 13 01 	sts	0x0113, r1	; 0x800113 <rcv_error_stop>
+     cac:	10 92 26 01 	sts	0x0126, r1	; 0x800126 <light_status>
+     cb0:	95 e1       	ldi	r25, 0x15	; 21
+     cb2:	90 93 34 01 	sts	0x0134, r25	; 0x800134 <tx_char>
+     cb6:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
+     cba:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
+     cbe:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <sending>
+     cc2:	16 bc       	out	0x26, r1	; 38
+     cc4:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     cc8:	82 60       	ori	r24, 0x02	; 2
+     cca:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+     cce:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     cd2:	81 11       	cpse	r24, r1
+     cd4:	fc cf       	rjmp	.-8      	; 0xcce <process_message+0x758>
+     cd6:	59 cc       	rjmp	.-1870   	; 0x58a <process_message+0x14>
+     cd8:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <vibe_enable>
+     cdc:	bf cd       	rjmp	.-1154   	; 0x85c <process_message+0x2e6>
+     cde:	10 92 21 01 	sts	0x0121, r1	; 0x800121 <temp_enable>
+     ce2:	b7 cd       	rjmp	.-1170   	; 0x852 <process_message+0x2dc>
+     ce4:	10 92 1f 01 	sts	0x011F, r1	; 0x80011f <light_enable>
+     ce8:	af cd       	rjmp	.-1186   	; 0x848 <process_message+0x2d2>
+     cea:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <vibe_enable>
+     cee:	13 ce       	rjmp	.-986    	; 0x916 <process_message+0x3a0>
+     cf0:	10 92 21 01 	sts	0x0121, r1	; 0x800121 <temp_enable>
+     cf4:	0b ce       	rjmp	.-1002   	; 0x90c <process_message+0x396>
+     cf6:	10 92 1f 01 	sts	0x011F, r1	; 0x80011f <light_enable>
+     cfa:	03 ce       	rjmp	.-1018   	; 0x902 <process_message+0x38c>
+     cfc:	81 e0       	ldi	r24, 0x01	; 1
+     cfe:	80 93 10 01 	sts	0x0110, r24	; 0x800110 <case_enable>
+     d02:	b0 cd       	rjmp	.-1184   	; 0x864 <process_message+0x2ee>
+     d04:	81 e0       	ldi	r24, 0x01	; 1
+     d06:	80 93 10 01 	sts	0x0110, r24	; 0x800110 <case_enable>
+     d0a:	09 ce       	rjmp	.-1006   	; 0x91e <process_message+0x3a8>
 
-00000bf2 <check_usart_faults>:
-}
+00000d0c <check_usart_faults>:
 
 void check_usart_faults(){
 	if ((light_fault > 20)&& (light_enable||temp_enable)){  //light and temp same chip
-     bf2:	80 91 0b 01 	lds	r24, 0x010B	; 0x80010b <light_fault>
-     bf6:	85 31       	cpi	r24, 0x15	; 21
-     bf8:	78 f0       	brcs	.+30     	; 0xc18 <check_usart_faults+0x26>
-     bfa:	80 91 1e 01 	lds	r24, 0x011E	; 0x80011e <light_enable>
-     bfe:	88 23       	and	r24, r24
-     c00:	09 f4       	brne	.+2      	; 0xc04 <check_usart_faults+0x12>
-     c02:	51 c0       	rjmp	.+162    	; 0xca6 <check_usart_faults+0xb4>
+     d0c:	80 91 0b 01 	lds	r24, 0x010B	; 0x80010b <light_fault>
+     d10:	85 31       	cpi	r24, 0x15	; 21
+     d12:	78 f0       	brcs	.+30     	; 0xd32 <check_usart_faults+0x26>
+     d14:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <light_enable>
+     d18:	88 23       	and	r24, r24
+     d1a:	09 f4       	brne	.+2      	; 0xd1e <check_usart_faults+0x12>
+     d1c:	51 c0       	rjmp	.+162    	; 0xdc0 <check_usart_faults+0xb4>
 		fault_code = USART;
-     c04:	80 e4       	ldi	r24, 0x40	; 64
-     c06:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
+     d1e:	80 e4       	ldi	r24, 0x40	; 64
+     d20:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
 		fault_value1 = LIGHT;
-     c0a:	81 e0       	ldi	r24, 0x01	; 1
-     c0c:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
+     d24:	81 e0       	ldi	r24, 0x01	; 1
+     d26:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
 		fault_value2 = 0x00;
-     c10:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
+     d2a:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
 		tamper_detected = 1;
-     c14:	80 93 21 01 	sts	0x0121, r24	; 0x800121 <tamper_detected>
+     d2e:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <tamper_detected>
 	}
 	if ((vibe_fault > 20) && vibe_enable){
-     c18:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <vibe_fault>
-     c1c:	85 31       	cpi	r24, 0x15	; 21
-     c1e:	20 f0       	brcs	.+8      	; 0xc28 <check_usart_faults+0x36>
-     c20:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <vibe_enable>
-     c24:	81 11       	cpse	r24, r1
-     c26:	33 c0       	rjmp	.+102    	; 0xc8e <check_usart_faults+0x9c>
+     d32:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <vibe_fault>
+     d36:	85 31       	cpi	r24, 0x15	; 21
+     d38:	20 f0       	brcs	.+8      	; 0xd42 <check_usart_faults+0x36>
+     d3a:	80 91 17 01 	lds	r24, 0x0117	; 0x800117 <vibe_enable>
+     d3e:	81 11       	cpse	r24, r1
+     d40:	33 c0       	rjmp	.+102    	; 0xda8 <check_usart_faults+0x9c>
 		fault_code = USART;
 		fault_value1 = VIBE;
 		fault_value2 = 0x00;
 		tamper_detected = 1;
 	}
 	if ((ssp_fault >20) && case_enable) {
-     c28:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <ssp_fault>
-     c2c:	85 31       	cpi	r24, 0x15	; 21
-     c2e:	20 f0       	brcs	.+8      	; 0xc38 <check_usart_faults+0x46>
-     c30:	80 91 10 01 	lds	r24, 0x0110	; 0x800110 <case_enable>
-     c34:	81 11       	cpse	r24, r1
-     c36:	1f c0       	rjmp	.+62     	; 0xc76 <check_usart_faults+0x84>
+     d42:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <ssp_fault>
+     d46:	85 31       	cpi	r24, 0x15	; 21
+     d48:	20 f0       	brcs	.+8      	; 0xd52 <check_usart_faults+0x46>
+     d4a:	80 91 10 01 	lds	r24, 0x0110	; 0x800110 <case_enable>
+     d4e:	81 11       	cpse	r24, r1
+     d50:	1f c0       	rjmp	.+62     	; 0xd90 <check_usart_faults+0x84>
 		fault_code = USART;
 		fault_value1 = SSP;
 		fault_value2 = 0x00;
 		tamper_detected = 1;
 	}
 	if (n25_fault >20) {
-     c38:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <n25_fault>
-     c3c:	85 31       	cpi	r24, 0x15	; 21
-     c3e:	58 f0       	brcs	.+22     	; 0xc56 <check_usart_faults+0x64>
+     d52:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <n25_fault>
+     d56:	85 31       	cpi	r24, 0x15	; 21
+     d58:	58 f0       	brcs	.+22     	; 0xd70 <check_usart_faults+0x64>
 		fault_code = USART;
-     c40:	80 e4       	ldi	r24, 0x40	; 64
-     c42:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
+     d5a:	80 e4       	ldi	r24, 0x40	; 64
+     d5c:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
 		fault_value1 = N25;
-     c46:	80 e2       	ldi	r24, 0x20	; 32
-     c48:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
+     d60:	80 e2       	ldi	r24, 0x20	; 32
+     d62:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
 		fault_value2 = 0x00;
-     c4c:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
+     d66:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
 		tamper_detected = 1;
-     c50:	81 e0       	ldi	r24, 0x01	; 1
-     c52:	80 93 21 01 	sts	0x0121, r24	; 0x800121 <tamper_detected>
+     d6a:	81 e0       	ldi	r24, 0x01	; 1
+     d6c:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <tamper_detected>
 	}
 	if (unk_fault >20) {
-     c56:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <unk_fault>
-     c5a:	85 31       	cpi	r24, 0x15	; 21
-     c5c:	58 f0       	brcs	.+22     	; 0xc74 <check_usart_faults+0x82>
+     d70:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <unk_fault>
+     d74:	85 31       	cpi	r24, 0x15	; 21
+     d76:	58 f0       	brcs	.+22     	; 0xd8e <check_usart_faults+0x82>
 		fault_code = USART;
-     c5e:	80 e4       	ldi	r24, 0x40	; 64
-     c60:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
+     d78:	80 e4       	ldi	r24, 0x40	; 64
+     d7a:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
 		fault_value1 = UNK;
-     c64:	80 e8       	ldi	r24, 0x80	; 128
-     c66:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
+     d7e:	80 e8       	ldi	r24, 0x80	; 128
+     d80:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
 		fault_value2 = 0x00;
-     c6a:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
+     d84:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
 		tamper_detected = 1;
-     c6e:	81 e0       	ldi	r24, 0x01	; 1
-     c70:	80 93 21 01 	sts	0x0121, r24	; 0x800121 <tamper_detected>
-     c74:	08 95       	ret
+     d88:	81 e0       	ldi	r24, 0x01	; 1
+     d8a:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <tamper_detected>
+     d8e:	08 95       	ret
 		fault_value1 = VIBE;
 		fault_value2 = 0x00;
 		tamper_detected = 1;
 	}
 	if ((ssp_fault >20) && case_enable) {
 		fault_code = USART;
-     c76:	80 e4       	ldi	r24, 0x40	; 64
-     c78:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
+     d90:	80 e4       	ldi	r24, 0x40	; 64
+     d92:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
 		fault_value1 = SSP;
-     c7c:	80 e1       	ldi	r24, 0x10	; 16
-     c7e:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
+     d96:	80 e1       	ldi	r24, 0x10	; 16
+     d98:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
 		fault_value2 = 0x00;
-     c82:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
+     d9c:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
 		tamper_detected = 1;
-     c86:	81 e0       	ldi	r24, 0x01	; 1
-     c88:	80 93 21 01 	sts	0x0121, r24	; 0x800121 <tamper_detected>
-     c8c:	d5 cf       	rjmp	.-86     	; 0xc38 <check_usart_faults+0x46>
+     da0:	81 e0       	ldi	r24, 0x01	; 1
+     da2:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <tamper_detected>
+     da6:	d5 cf       	rjmp	.-86     	; 0xd52 <check_usart_faults+0x46>
 		fault_value1 = LIGHT;
 		fault_value2 = 0x00;
 		tamper_detected = 1;
 	}
 	if ((vibe_fault > 20) && vibe_enable){
 		fault_code = USART;
-     c8e:	80 e4       	ldi	r24, 0x40	; 64
-     c90:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
+     da8:	80 e4       	ldi	r24, 0x40	; 64
+     daa:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <fault_code>
 		fault_value1 = VIBE;
-     c94:	84 e0       	ldi	r24, 0x04	; 4
-     c96:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
+     dae:	84 e0       	ldi	r24, 0x04	; 4
+     db0:	80 93 07 01 	sts	0x0107, r24	; 0x800107 <fault_value1>
 		fault_value2 = 0x00;
-     c9a:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
+     db4:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <fault_value2>
 		tamper_detected = 1;
-     c9e:	81 e0       	ldi	r24, 0x01	; 1
-     ca0:	80 93 21 01 	sts	0x0121, r24	; 0x800121 <tamper_detected>
-     ca4:	c1 cf       	rjmp	.-126    	; 0xc28 <check_usart_faults+0x36>
-	TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
+     db8:	81 e0       	ldi	r24, 0x01	; 1
+     dba:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <tamper_detected>
+     dbe:	c1 cf       	rjmp	.-126    	; 0xd42 <check_usart_faults+0x36>
 	TIMSK0 |= (1<<OCIE0A);
+	while(sending);
 }
 
 void check_usart_faults(){
 	if ((light_fault > 20)&& (light_enable||temp_enable)){  //light and temp same chip
-     ca6:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <temp_enable>
-     caa:	88 23       	and	r24, r24
-     cac:	09 f4       	brne	.+2      	; 0xcb0 <check_usart_faults+0xbe>
-     cae:	b4 cf       	rjmp	.-152    	; 0xc18 <check_usart_faults+0x26>
-     cb0:	a9 cf       	rjmp	.-174    	; 0xc04 <check_usart_faults+0x12>
+     dc0:	80 91 21 01 	lds	r24, 0x0121	; 0x800121 <temp_enable>
+     dc4:	88 23       	and	r24, r24
+     dc6:	09 f4       	brne	.+2      	; 0xdca <check_usart_faults+0xbe>
+     dc8:	b4 cf       	rjmp	.-152    	; 0xd32 <check_usart_faults+0x26>
+     dca:	a9 cf       	rjmp	.-174    	; 0xd1e <check_usart_faults+0x12>
 
-00000cb2 <main>:
+00000dcc <main>:
 }
 
 static inline void
 mkm_grab()
 {
   MKM_CONTROL_FPGA_PORT |= _BV(MKM_CONTROL_FPGA_BIT);
-     cb2:	17 9a       	sbi	0x02, 7	; 2
+     dcc:	17 9a       	sbi	0x02, 7	; 2
   MKM_CONTROL_AVR_PORT &= ~_BV(MKM_CONTROL_AVR_BIT);
-     cb4:	16 98       	cbi	0x02, 6	; 2
+     dce:	16 98       	cbi	0x02, 6	; 2
 static inline void
 init_ports()
 {
   /* Configure all PORTA pins except the tamper detection pin as
      outputs. */
   DDRA = 0xff & ~_BV(AVR_PANIC_BIT);
-     cb6:	8f ee       	ldi	r24, 0xEF	; 239
-     cb8:	81 b9       	out	0x01, r24	; 1
+     dd0:	8f ee       	ldi	r24, 0xEF	; 239
+     dd2:	81 b9       	out	0x01, r24	; 1
   //DDRB = 0xff & ~_BV(PINB3);
   //DDRB = 0xff & ~_BV(PINB2);
 	DDRB = 0xf7; //was fb
-     cba:	87 ef       	ldi	r24, 0xF7	; 247
-     cbc:	85 b9       	out	0x05, r24	; 5
+     dd4:	87 ef       	ldi	r24, 0xF7	; 247
+     dd6:	85 b9       	out	0x05, r24	; 5
 
 static void
 init_interrupts()
 {
   //PCICR |= _BV(PCIE0|PCIE2);    /* Enable pin change interrupt on PCMSK0 & PCMSK2*/
   PCICR = (1<<PCIE0)|(1<<PCIE1)|(1<<PCIE2);
-     cbe:	87 e0       	ldi	r24, 0x07	; 7
-     cc0:	80 93 68 00 	sts	0x0068, r24	; 0x800068 <__EEPROM_REGION_LENGTH__+0x7f0068>
+     dd8:	87 e0       	ldi	r24, 0x07	; 7
+     dda:	80 93 68 00 	sts	0x0068, r24	; 0x800068 <__EEPROM_REGION_LENGTH__+0x7f0068>
   PCMSK0 |= _BV(PCINT4);        /* Set mask bit for PCINT4 (panic) */
-     cc4:	80 91 6b 00 	lds	r24, 0x006B	; 0x80006b <__EEPROM_REGION_LENGTH__+0x7f006b>
-     cc8:	80 61       	ori	r24, 0x10	; 16
-     cca:	80 93 6b 00 	sts	0x006B, r24	; 0x80006b <__EEPROM_REGION_LENGTH__+0x7f006b>
+     dde:	80 91 6b 00 	lds	r24, 0x006B	; 0x80006b <__EEPROM_REGION_LENGTH__+0x7f006b>
+     de2:	80 61       	ori	r24, 0x10	; 16
+     de4:	80 93 6b 00 	sts	0x006B, r24	; 0x80006b <__EEPROM_REGION_LENGTH__+0x7f006b>
   /*setup PC6 as tamper disable */
   //PUEC = (1<<PUEC6);			/*enable internal pull-up to avoid false triggers */ 
   PORTC |= (1<<PORTC6);
-     cce:	56 9a       	sbi	0x0a, 6	; 10
+     de8:	56 9a       	sbi	0x0a, 6	; 10
   //PCMSK2 |= _BV(PCINT22);
   /*setup PB2 as soft-UART RX*/
   //PUEB = (1<<PUEB3) | (1<<PUEB2);			/*enable internal pull-up to detect start bit */
   PUEB = (1<<PUEB3);
-     cd0:	88 e0       	ldi	r24, 0x08	; 8
-     cd2:	87 b9       	out	0x07, r24	; 7
+     dea:	88 e0       	ldi	r24, 0x08	; 8
+     dec:	87 b9       	out	0x07, r24	; 7
   PCMSK1 |= _BV(PCINT11);
-     cd4:	80 91 6c 00 	lds	r24, 0x006C	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
-     cd8:	88 60       	ori	r24, 0x08	; 8
-     cda:	80 93 6c 00 	sts	0x006C, r24	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
+     dee:	80 91 6c 00 	lds	r24, 0x006C	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
+     df2:	88 60       	ori	r24, 0x08	; 8
+     df4:	80 93 6c 00 	sts	0x006C, r24	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
  // PCMSK1 |= _BV(PCINT10);
   sei();
-     cde:	78 94       	sei
+     df8:	78 94       	sei
   init_power_reduction();
   init_interrupts();
   //mlx_get_calib();
   //init_tamper_values(0, 1);
 	
   flags = 0xFF;
-     ce0:	8f ef       	ldi	r24, 0xFF	; 255
-     ce2:	80 93 0f 01 	sts	0x010F, r24	; 0x80010f <flags>
+     dfa:	8f ef       	ldi	r24, 0xFF	; 255
+     dfc:	80 93 0f 01 	sts	0x010F, r24	; 0x80010f <flags>
   configured = 0;
-     ce6:	10 92 0e 01 	sts	0x010E, r1	; 0x80010e <configured>
+     e00:	10 92 0e 01 	sts	0x010E, r1	; 0x80010e <configured>
   tamper_detected = 0;
-     cea:	10 92 21 01 	sts	0x0121, r1	; 0x800121 <tamper_detected>
+     e04:	10 92 22 01 	sts	0x0122, r1	; 0x800122 <tamper_detected>
   uint8_t ssp_status = 0;
   sending = 0;
-     cee:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <sending>
+     e08:	10 92 18 01 	sts	0x0118, r1	; 0x800118 <sending>
   receiving = 0;
-     cf2:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <receiving>
+     e0c:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <receiving>
   tx_char = 0;
-     cf6:	10 92 33 01 	sts	0x0133, r1	; 0x800133 <tx_char>
+     e10:	10 92 34 01 	sts	0x0134, r1	; 0x800134 <tx_char>
   tx_bit_count = 0;
-     cfa:	10 92 15 01 	sts	0x0115, r1	; 0x800115 <tx_bit_count>
+     e14:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <tx_bit_count>
   light_fault = 0;
-     cfe:	10 92 0b 01 	sts	0x010B, r1	; 0x80010b <light_fault>
+     e18:	10 92 0b 01 	sts	0x010B, r1	; 0x80010b <light_fault>
   vibe_fault = 0;
-     d02:	10 92 0c 01 	sts	0x010C, r1	; 0x80010c <vibe_fault>
+     e1c:	10 92 0c 01 	sts	0x010C, r1	; 0x80010c <vibe_fault>
   ssp_fault = 0;
-     d06:	10 92 0d 01 	sts	0x010D, r1	; 0x80010d <ssp_fault>
+     e20:	10 92 0d 01 	sts	0x010D, r1	; 0x80010d <ssp_fault>
   n25_fault = 0;
-     d0a:	10 92 0a 01 	sts	0x010A, r1	; 0x80010a <n25_fault>
+     e24:	10 92 0a 01 	sts	0x010A, r1	; 0x80010a <n25_fault>
   unk_fault = 0;
-     d0e:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <unk_fault>
+     e28:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <unk_fault>
   PORTB |= _BV(PORTB3);   //set TX idle high
-     d12:	33 9a       	sbi	0x06, 3	; 6
+     e2c:	33 9a       	sbi	0x06, 3	; 6
   wd_init = 0x01;
-     d14:	81 e0       	ldi	r24, 0x01	; 1
-     d16:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <wd_init>
+     e2e:	81 e0       	ldi	r24, 0x01	; 1
+     e30:	80 93 23 01 	sts	0x0123, r24	; 0x800123 <wd_init>
   ssp_out = WDOG_RS;
-     d1a:	90 e1       	ldi	r25, 0x10	; 16
-     d1c:	90 93 14 01 	sts	0x0114, r25	; 0x800114 <ssp_out>
+     e34:	90 e1       	ldi	r25, 0x10	; 16
+     e36:	90 93 14 01 	sts	0x0114, r25	; 0x800114 <ssp_out>
   PORTC |= _BV(PORTC6);
-     d20:	56 9a       	sbi	0x0a, 6	; 10
+     e3a:	56 9a       	sbi	0x0a, 6	; 10
   TCNT0 = 0x00;
-     d22:	16 bc       	out	0x26, r1	; 38
+     e3c:	16 bc       	out	0x26, r1	; 38
   TCCR0A = (1<<COM0A1) | (1 << WGM01);             //CTC mode
-     d24:	92 e8       	ldi	r25, 0x82	; 130
-     d26:	94 bd       	out	0x24, r25	; 36
+     e3e:	92 e8       	ldi	r25, 0x82	; 130
+     e40:	94 bd       	out	0x24, r25	; 36
   TCCR0B = (1 << CS00);              //div1
-     d28:	85 bd       	out	0x25, r24	; 37
+     e42:	85 bd       	out	0x25, r24	; 37
   OCR0A = 180;						// 208us compare value for 4800 baud
-     d2a:	24 eb       	ldi	r18, 0xB4	; 180
-     d2c:	27 bd       	out	0x27, r18	; 39
+     e44:	24 eb       	ldi	r18, 0xB4	; 180
+     e46:	27 bd       	out	0x27, r18	; 39
   
    TCNT1 = 0x00;
-     d2e:	10 92 85 00 	sts	0x0085, r1	; 0x800085 <__EEPROM_REGION_LENGTH__+0x7f0085>
-     d32:	10 92 84 00 	sts	0x0084, r1	; 0x800084 <__EEPROM_REGION_LENGTH__+0x7f0084>
+     e48:	10 92 85 00 	sts	0x0085, r1	; 0x800085 <__EEPROM_REGION_LENGTH__+0x7f0085>
+     e4c:	10 92 84 00 	sts	0x0084, r1	; 0x800084 <__EEPROM_REGION_LENGTH__+0x7f0084>
    TCCR1A = (1<<COM1A1) | (1 << WGM01);             //CTC mode
-     d36:	90 93 80 00 	sts	0x0080, r25	; 0x800080 <__EEPROM_REGION_LENGTH__+0x7f0080>
+     e50:	90 93 80 00 	sts	0x0080, r25	; 0x800080 <__EEPROM_REGION_LENGTH__+0x7f0080>
    TCCR1B = (1 << CS00);              //div1
-     d3a:	80 93 81 00 	sts	0x0081, r24	; 0x800081 <__EEPROM_REGION_LENGTH__+0x7f0081>
+     e54:	80 93 81 00 	sts	0x0081, r24	; 0x800081 <__EEPROM_REGION_LENGTH__+0x7f0081>
    OCR1A = 180;						// 208us compare value for 4800 baud
-     d3e:	84 eb       	ldi	r24, 0xB4	; 180
-     d40:	90 e0       	ldi	r25, 0x00	; 0
-     d42:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__EEPROM_REGION_LENGTH__+0x7f0089>
-     d46:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__EEPROM_REGION_LENGTH__+0x7f0088>
+     e58:	84 eb       	ldi	r24, 0xB4	; 180
+     e5a:	90 e0       	ldi	r25, 0x00	; 0
+     e5c:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__EEPROM_REGION_LENGTH__+0x7f0089>
+     e60:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__EEPROM_REGION_LENGTH__+0x7f0088>
   
   //initTimer1(TWD_INIT);
   
   mkm_release();*/
   /* Flash LED's at startup. */
   AVR_LED_PORT |= 0x0f;
-     d4a:	82 b1       	in	r24, 0x02	; 2
-     d4c:	8f 60       	ori	r24, 0x0F	; 15
-     d4e:	82 b9       	out	0x02, r24	; 2
+     e64:	82 b1       	in	r24, 0x02	; 2
+     e66:	8f 60       	ori	r24, 0x0F	; 15
+     e68:	82 b9       	out	0x02, r24	; 2
   for (int i = 0; i < 16000; i++);
   AVR_LED_PORT &= ~0x0f;
-     d50:	82 b1       	in	r24, 0x02	; 2
-     d52:	80 7f       	andi	r24, 0xF0	; 240
-     d54:	82 b9       	out	0x02, r24	; 2
+     e6a:	82 b1       	in	r24, 0x02	; 2
+     e6c:	80 7f       	andi	r24, 0xF0	; 240
+     e6e:	82 b9       	out	0x02, r24	; 2
   // go to sleep, interrupt will wake us
   //sleep();
   temperature = 80;
-     d56:	80 e5       	ldi	r24, 0x50	; 80
-     d58:	90 e0       	ldi	r25, 0x00	; 0
-     d5a:	90 93 1a 01 	sts	0x011A, r25	; 0x80011a <temperature+0x1>
-     d5e:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <temperature>
+     e70:	80 e5       	ldi	r24, 0x50	; 80
+     e72:	90 e0       	ldi	r25, 0x00	; 0
+     e74:	90 93 1b 01 	sts	0x011B, r25	; 0x80011b <temperature+0x1>
+     e78:	80 93 1a 01 	sts	0x011A, r24	; 0x80011a <temperature>
   light = 0xaa55;
-     d62:	85 e5       	ldi	r24, 0x55	; 85
-     d64:	9a ea       	ldi	r25, 0xAA	; 170
-     d66:	90 93 1c 01 	sts	0x011C, r25	; 0x80011c <light+0x1>
-     d6a:	80 93 1b 01 	sts	0x011B, r24	; 0x80011b <light>
+     e7c:	85 e5       	ldi	r24, 0x55	; 85
+     e7e:	9a ea       	ldi	r25, 0xAA	; 170
+     e80:	90 93 1d 01 	sts	0x011D, r25	; 0x80011d <light+0x1>
+     e84:	80 93 1c 01 	sts	0x011C, r24	; 0x80011c <light>
   
   rcv_valid = 0;
-     d6e:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
+     e88:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
   sei();
-     d72:	78 94       	sei
+     e8c:	78 94       	sei
 			//if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
 				//mkm_wipe();
 			//}
 			//read accelerometer 
 			if ((adx_read_status() & ADX_ACT) && (vibe_enable)){
 				fault_code = VIBE;
-     d74:	14 e0       	ldi	r17, 0x04	; 4
+     e8e:	14 e0       	ldi	r17, 0x04	; 4
 			//read light and temp
 			mlx_get_meas();
 			//if temp is out side normal storage or sensor is exposed to bright light
 			//actual values 1TBD 
 			if ((((temperature > temp_hi_thresh) | (temperature < temp_lo_thresh)) && temp_enable) ){
 				fault_code = TEMP;
-     d76:	d2 e0       	ldi	r29, 0x02	; 2
+     e90:	d2 e0       	ldi	r29, 0x02	; 2
 				fault_value1 = ((uint8_t) temperature>>8);
 				fault_value2 = ((uint8_t) temperature&0xFF);
 				mkm_wipe();
 			}
 			if((light > light_thresh) && light_enable ) {
 				fault_code = LIGHT;
-     d78:	c1 e0       	ldi	r28, 0x01	; 1
-     d7a:	05 c0       	rjmp	.+10     	; 0xd86 <main+0xd4>
-		if (rcv_valid == 1){
+     e92:	c1 e0       	ldi	r28, 0x01	; 1
+     e94:	04 c0       	rjmp	.+8      	; 0xe9e <main+0xd2>
 			rcv_valid = 0;
 			start_bit = 1;
 			process_message();
 		}
-		check_usart_faults();
-     d7c:	3a df       	rcall	.-396    	; 0xbf2 <check_usart_faults>
+		
 		if (configured == 0x55) {
-     d7e:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <configured>
-     d82:	85 35       	cpi	r24, 0x55	; 85
-     d84:	71 f0       	breq	.+28     	; 0xda2 <main+0xf0>
+     e96:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <configured>
+     e9a:	85 35       	cpi	r24, 0x55	; 85
+     e9c:	69 f0       	breq	.+26     	; 0xeb8 <main+0xec>
   sei();
   while (1)
     {
 		//n25_read(0x00, 0x00, 0x00, 8);
 		//read in character and echo back
 		if (rcv_valid == 1){
-     d86:	80 91 23 01 	lds	r24, 0x0123	; 0x800123 <rcv_valid>
-     d8a:	81 30       	cpi	r24, 0x01	; 1
-     d8c:	b9 f7       	brne	.-18     	; 0xd7c <main+0xca>
+     e9e:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <rcv_valid>
+     ea2:	81 30       	cpi	r24, 0x01	; 1
+     ea4:	c1 f7       	brne	.-16     	; 0xe96 <main+0xca>
 			rcv_valid = 0;
-     d8e:	10 92 23 01 	sts	0x0123, r1	; 0x800123 <rcv_valid>
+     ea6:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <rcv_valid>
 			start_bit = 1;
-     d92:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
+     eaa:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
 			process_message();
-     d96:	ef db       	rcall	.-2082   	; 0x576 <process_message>
+     eae:	63 db       	rcall	.-2362   	; 0x576 <process_message>
 		}
-		check_usart_faults();
-     d98:	2c df       	rcall	.-424    	; 0xbf2 <check_usart_faults>
+		
 		if (configured == 0x55) {
-     d9a:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <configured>
-     d9e:	85 35       	cpi	r24, 0x55	; 85
-     da0:	91 f7       	brne	.-28     	; 0xd86 <main+0xd4>
+     eb0:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <configured>
+     eb4:	85 35       	cpi	r24, 0x55	; 85
+     eb6:	99 f7       	brne	.-26     	; 0xe9e <main+0xd2>
+			check_usart_faults();
+     eb8:	29 df       	rcall	.-430    	; 0xd0c <check_usart_faults>
 			//ssp_status = ssp_read_byte();
 			//if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
 				//mkm_wipe();
 			//}
 			//read accelerometer 
 			if ((adx_read_status() & ADX_ACT) && (vibe_enable)){
-     da2:	c2 d9       	rcall	.-3196   	; 0x128 <adx_read_status>
-     da4:	84 ff       	sbrs	r24, 4
-     da6:	04 c0       	rjmp	.+8      	; 0xdb0 <main+0xfe>
-     da8:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <vibe_enable>
-     dac:	81 11       	cpse	r24, r1
-     dae:	53 c0       	rjmp	.+166    	; 0xe56 <main+0x1a4>
+     eba:	36 d9       	rcall	.-3476   	; 0x128 <adx_read_status>
+     ebc:	84 ff       	sbrs	r24, 4
+     ebe:	04 c0       	rjmp	.+8      	; 0xec8 <main+0xfc>
+     ec0:	80 91 17 01 	lds	r24, 0x0117	; 0x800117 <vibe_enable>
+     ec4:	81 11       	cpse	r24, r1
+     ec6:	53 c0       	rjmp	.+166    	; 0xf6e <main+0x1a2>
 				fault_code = VIBE;
 				mkm_wipe();
 			}
 			//}
 			//read light and temp
 			mlx_get_meas();
-     db0:	c7 d9       	rcall	.-3186   	; 0x140 <mlx_get_meas>
+     ec8:	3b d9       	rcall	.-3466   	; 0x140 <mlx_get_meas>
 			//if temp is out side normal storage or sensor is exposed to bright light
 			//actual values 1TBD 
 			if ((((temperature > temp_hi_thresh) | (temperature < temp_lo_thresh)) && temp_enable) ){
-     db2:	20 91 19 01 	lds	r18, 0x0119	; 0x800119 <temperature>
-     db6:	30 91 1a 01 	lds	r19, 0x011A	; 0x80011a <temperature+0x1>
-     dba:	80 91 35 01 	lds	r24, 0x0135	; 0x800135 <temp_hi_thresh>
-     dbe:	90 91 36 01 	lds	r25, 0x0136	; 0x800136 <temp_hi_thresh+0x1>
-     dc2:	60 91 19 01 	lds	r22, 0x0119	; 0x800119 <temperature>
-     dc6:	70 91 1a 01 	lds	r23, 0x011A	; 0x80011a <temperature+0x1>
-     dca:	40 91 38 01 	lds	r20, 0x0138	; 0x800138 <temp_lo_thresh>
-     dce:	50 91 39 01 	lds	r21, 0x0139	; 0x800139 <temp_lo_thresh+0x1>
-     dd2:	82 17       	cp	r24, r18
-     dd4:	93 07       	cpc	r25, r19
-     dd6:	44 f5       	brge	.+80     	; 0xe28 <main+0x176>
-     dd8:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <temp_enable>
-     ddc:	81 11       	cpse	r24, r1
-     dde:	2b c0       	rjmp	.+86     	; 0xe36 <main+0x184>
+     eca:	20 91 1a 01 	lds	r18, 0x011A	; 0x80011a <temperature>
+     ece:	30 91 1b 01 	lds	r19, 0x011B	; 0x80011b <temperature+0x1>
+     ed2:	80 91 36 01 	lds	r24, 0x0136	; 0x800136 <temp_hi_thresh>
+     ed6:	90 91 37 01 	lds	r25, 0x0137	; 0x800137 <temp_hi_thresh+0x1>
+     eda:	60 91 1a 01 	lds	r22, 0x011A	; 0x80011a <temperature>
+     ede:	70 91 1b 01 	lds	r23, 0x011B	; 0x80011b <temperature+0x1>
+     ee2:	40 91 39 01 	lds	r20, 0x0139	; 0x800139 <temp_lo_thresh>
+     ee6:	50 91 3a 01 	lds	r21, 0x013A	; 0x80013a <temp_lo_thresh+0x1>
+     eea:	82 17       	cp	r24, r18
+     eec:	93 07       	cpc	r25, r19
+     eee:	44 f5       	brge	.+80     	; 0xf40 <main+0x174>
+     ef0:	80 91 21 01 	lds	r24, 0x0121	; 0x800121 <temp_enable>
+     ef4:	81 11       	cpse	r24, r1
+     ef6:	2b c0       	rjmp	.+86     	; 0xf4e <main+0x182>
 				fault_code = TEMP;
 				fault_value1 = ((uint8_t) temperature>>8);
 				fault_value2 = ((uint8_t) temperature&0xFF);
 				mkm_wipe();
 			}
 			if((light > light_thresh) && light_enable ) {
-     de0:	20 91 1b 01 	lds	r18, 0x011B	; 0x80011b <light>
-     de4:	30 91 1c 01 	lds	r19, 0x011C	; 0x80011c <light+0x1>
-     de8:	80 91 30 01 	lds	r24, 0x0130	; 0x800130 <light_thresh>
-     dec:	90 91 31 01 	lds	r25, 0x0131	; 0x800131 <light_thresh+0x1>
-     df0:	82 17       	cp	r24, r18
-     df2:	93 07       	cpc	r25, r19
-     df4:	40 f6       	brcc	.-112    	; 0xd86 <main+0xd4>
-     df6:	80 91 1e 01 	lds	r24, 0x011E	; 0x80011e <light_enable>
-     dfa:	88 23       	and	r24, r24
-     dfc:	21 f2       	breq	.-120    	; 0xd86 <main+0xd4>
+     ef8:	20 91 1c 01 	lds	r18, 0x011C	; 0x80011c <light>
+     efc:	30 91 1d 01 	lds	r19, 0x011D	; 0x80011d <light+0x1>
+     f00:	80 91 31 01 	lds	r24, 0x0131	; 0x800131 <light_thresh>
+     f04:	90 91 32 01 	lds	r25, 0x0132	; 0x800132 <light_thresh+0x1>
+     f08:	82 17       	cp	r24, r18
+     f0a:	93 07       	cpc	r25, r19
+     f0c:	40 f6       	brcc	.-112    	; 0xe9e <main+0xd2>
+     f0e:	80 91 1f 01 	lds	r24, 0x011F	; 0x80011f <light_enable>
+     f12:	88 23       	and	r24, r24
+     f14:	21 f2       	breq	.-120    	; 0xe9e <main+0xd2>
 				fault_code = LIGHT;
-     dfe:	c0 93 08 01 	sts	0x0108, r28	; 0x800108 <fault_code>
+     f16:	c0 93 08 01 	sts	0x0108, r28	; 0x800108 <fault_code>
 				fault_value1 = ((uint8_t) light>8);
-     e02:	80 91 1b 01 	lds	r24, 0x011B	; 0x80011b <light>
-     e06:	90 91 1c 01 	lds	r25, 0x011C	; 0x80011c <light+0x1>
-     e0a:	99 27       	eor	r25, r25
-     e0c:	21 e0       	ldi	r18, 0x01	; 1
-     e0e:	09 97       	sbiw	r24, 0x09	; 9
-     e10:	0c f4       	brge	.+2      	; 0xe14 <main+0x162>
-     e12:	20 e0       	ldi	r18, 0x00	; 0
-     e14:	20 93 07 01 	sts	0x0107, r18	; 0x800107 <fault_value1>
+     f1a:	80 91 1c 01 	lds	r24, 0x011C	; 0x80011c <light>
+     f1e:	90 91 1d 01 	lds	r25, 0x011D	; 0x80011d <light+0x1>
+     f22:	99 27       	eor	r25, r25
+     f24:	21 e0       	ldi	r18, 0x01	; 1
+     f26:	09 97       	sbiw	r24, 0x09	; 9
+     f28:	0c f4       	brge	.+2      	; 0xf2c <main+0x160>
+     f2a:	20 e0       	ldi	r18, 0x00	; 0
+     f2c:	20 93 07 01 	sts	0x0107, r18	; 0x800107 <fault_value1>
 				fault_value2 = ((uint8_t) light&0xFF);
-     e18:	80 91 1b 01 	lds	r24, 0x011B	; 0x80011b <light>
-     e1c:	90 91 1c 01 	lds	r25, 0x011C	; 0x80011c <light+0x1>
-     e20:	80 93 06 01 	sts	0x0106, r24	; 0x800106 <fault_value2>
+     f30:	80 91 1c 01 	lds	r24, 0x011C	; 0x80011c <light>
+     f34:	90 91 1d 01 	lds	r25, 0x011D	; 0x80011d <light+0x1>
+     f38:	80 93 06 01 	sts	0x0106, r24	; 0x800106 <fault_value2>
 				mkm_wipe();
-     e24:	25 db       	rcall	.-2486   	; 0x470 <mkm_wipe>
-     e26:	af cf       	rjmp	.-162    	; 0xd86 <main+0xd4>
+     f3c:	99 da       	rcall	.-2766   	; 0x470 <mkm_wipe>
+     f3e:	af cf       	rjmp	.-162    	; 0xe9e <main+0xd2>
 			//}
 			//read light and temp
 			mlx_get_meas();
 			//if temp is out side normal storage or sensor is exposed to bright light
 			//actual values 1TBD 
 			if ((((temperature > temp_hi_thresh) | (temperature < temp_lo_thresh)) && temp_enable) ){
-     e28:	64 17       	cp	r22, r20
-     e2a:	75 07       	cpc	r23, r21
-     e2c:	cc f6       	brge	.-78     	; 0xde0 <main+0x12e>
-     e2e:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <temp_enable>
-     e32:	88 23       	and	r24, r24
-     e34:	a9 f2       	breq	.-86     	; 0xde0 <main+0x12e>
+     f40:	64 17       	cp	r22, r20
+     f42:	75 07       	cpc	r23, r21
+     f44:	cc f6       	brge	.-78     	; 0xef8 <main+0x12c>
+     f46:	80 91 21 01 	lds	r24, 0x0121	; 0x800121 <temp_enable>
+     f4a:	88 23       	and	r24, r24
+     f4c:	a9 f2       	breq	.-86     	; 0xef8 <main+0x12c>
 				fault_code = TEMP;
-     e36:	d0 93 08 01 	sts	0x0108, r29	; 0x800108 <fault_code>
+     f4e:	d0 93 08 01 	sts	0x0108, r29	; 0x800108 <fault_code>
 				fault_value1 = ((uint8_t) temperature>>8);
-     e3a:	80 91 19 01 	lds	r24, 0x0119	; 0x800119 <temperature>
-     e3e:	90 91 1a 01 	lds	r25, 0x011A	; 0x80011a <temperature+0x1>
-     e42:	10 92 07 01 	sts	0x0107, r1	; 0x800107 <fault_value1>
+     f52:	80 91 1a 01 	lds	r24, 0x011A	; 0x80011a <temperature>
+     f56:	90 91 1b 01 	lds	r25, 0x011B	; 0x80011b <temperature+0x1>
+     f5a:	10 92 07 01 	sts	0x0107, r1	; 0x800107 <fault_value1>
 				fault_value2 = ((uint8_t) temperature&0xFF);
-     e46:	80 91 19 01 	lds	r24, 0x0119	; 0x800119 <temperature>
-     e4a:	90 91 1a 01 	lds	r25, 0x011A	; 0x80011a <temperature+0x1>
-     e4e:	80 93 06 01 	sts	0x0106, r24	; 0x800106 <fault_value2>
+     f5e:	80 91 1a 01 	lds	r24, 0x011A	; 0x80011a <temperature>
+     f62:	90 91 1b 01 	lds	r25, 0x011B	; 0x80011b <temperature+0x1>
+     f66:	80 93 06 01 	sts	0x0106, r24	; 0x800106 <fault_value2>
 				mkm_wipe();
-     e52:	0e db       	rcall	.-2532   	; 0x470 <mkm_wipe>
-     e54:	c5 cf       	rjmp	.-118    	; 0xde0 <main+0x12e>
+     f6a:	82 da       	rcall	.-2812   	; 0x470 <mkm_wipe>
+     f6c:	c5 cf       	rjmp	.-118    	; 0xef8 <main+0x12c>
 			//if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
 				//mkm_wipe();
 			//}
 			//read accelerometer 
 			if ((adx_read_status() & ADX_ACT) && (vibe_enable)){
 				fault_code = VIBE;
-     e56:	10 93 08 01 	sts	0x0108, r17	; 0x800108 <fault_code>
+     f6e:	10 93 08 01 	sts	0x0108, r17	; 0x800108 <fault_code>
 				mkm_wipe();
-     e5a:	0a db       	rcall	.-2540   	; 0x470 <mkm_wipe>
-     e5c:	a9 cf       	rjmp	.-174    	; 0xdb0 <main+0xfe>
+     f72:	7e da       	rcall	.-2820   	; 0x470 <mkm_wipe>
+     f74:	a9 cf       	rjmp	.-174    	; 0xec8 <main+0xfc>
 
-00000e5e <__vector_12>:
+00000f76 <__vector_12>:
 }
 
 
 //soft-uart timer
 ISR (TIMER0_COMPA_vect)
 {
-     e5e:	1f 92       	push	r1
-     e60:	0f 92       	push	r0
-     e62:	0f b6       	in	r0, 0x3f	; 63
-     e64:	0f 92       	push	r0
-     e66:	11 24       	eor	r1, r1
-     e68:	2f 93       	push	r18
-     e6a:	3f 93       	push	r19
-     e6c:	4f 93       	push	r20
-     e6e:	5f 93       	push	r21
-     e70:	8f 93       	push	r24
-     e72:	9f 93       	push	r25
+     f76:	1f 92       	push	r1
+     f78:	0f 92       	push	r0
+     f7a:	0f b6       	in	r0, 0x3f	; 63
+     f7c:	0f 92       	push	r0
+     f7e:	11 24       	eor	r1, r1
+     f80:	2f 93       	push	r18
+     f82:	3f 93       	push	r19
+     f84:	4f 93       	push	r20
+     f86:	5f 93       	push	r21
+     f88:	8f 93       	push	r24
+     f8a:	9f 93       	push	r25
 	/*disable interrupts, should we or allow NMI of tamper switch detect? */
 	//cli();
 	//sei();
 	TCNT0 = 0x00;
-     e74:	16 bc       	out	0x26, r1	; 38
+     f8c:	16 bc       	out	0x26, r1	; 38
 	int i;
 	PORTC ^= _BV(PORTC6);		//toggle gp6 to check on progress
-     e76:	9a b1       	in	r25, 0x0a	; 10
-     e78:	80 e4       	ldi	r24, 0x40	; 64
-     e7a:	89 27       	eor	r24, r25
-     e7c:	8a b9       	out	0x0a, r24	; 10
+     f8e:	9a b1       	in	r25, 0x0a	; 10
+     f90:	80 e4       	ldi	r24, 0x40	; 64
+     f92:	89 27       	eor	r24, r25
+     f94:	8a b9       	out	0x0a, r24	; 10
 	if (receiving) {
-     e7e:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <receiving>
-     e82:	88 23       	and	r24, r24
-     e84:	49 f0       	breq	.+18     	; 0xe98 <__vector_12+0x3a>
+     f96:	80 91 25 01 	lds	r24, 0x0125	; 0x800125 <receiving>
+     f9a:	88 23       	and	r24, r24
+     f9c:	49 f0       	breq	.+18     	; 0xfb0 <__vector_12+0x3a>
 		if (start_bit)	{
-     e86:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <start_bit>
-     e8a:	88 23       	and	r24, r24
-     e8c:	79 f1       	breq	.+94     	; 0xeec <__vector_12+0x8e>
+     f9e:	80 91 19 01 	lds	r24, 0x0119	; 0x800119 <start_bit>
+     fa2:	88 23       	and	r24, r24
+     fa4:	79 f1       	breq	.+94     	; 0x1004 <__vector_12+0x8e>
 			start_bit--;
-     e8e:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <start_bit>
-     e92:	81 50       	subi	r24, 0x01	; 1
-     e94:	80 93 18 01 	sts	0x0118, r24	; 0x800118 <start_bit>
+     fa6:	80 91 19 01 	lds	r24, 0x0119	; 0x800119 <start_bit>
+     faa:	81 50       	subi	r24, 0x01	; 1
+     fac:	80 93 19 01 	sts	0x0119, r24	; 0x800119 <start_bit>
 				//return;
 			}
 			rcv_bit_count--;
 		}
 	}
 	if (sending){
-     e98:	80 91 17 01 	lds	r24, 0x0117	; 0x800117 <sending>
-     e9c:	88 23       	and	r24, r24
-     e9e:	d9 f0       	breq	.+54     	; 0xed6 <__vector_12+0x78>
+     fb0:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <sending>
+     fb4:	88 23       	and	r24, r24
+     fb6:	d9 f0       	breq	.+54     	; 0xfee <__vector_12+0x78>
 		if (start_bit == 1)	{
-     ea0:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <start_bit>
-     ea4:	81 30       	cpi	r24, 0x01	; 1
-     ea6:	09 f4       	brne	.+2      	; 0xeaa <__vector_12+0x4c>
-     ea8:	54 c0       	rjmp	.+168    	; 0xf52 <__vector_12+0xf4>
+     fb8:	80 91 19 01 	lds	r24, 0x0119	; 0x800119 <start_bit>
+     fbc:	81 30       	cpi	r24, 0x01	; 1
+     fbe:	09 f4       	brne	.+2      	; 0xfc2 <__vector_12+0x4c>
+     fc0:	54 c0       	rjmp	.+168    	; 0x106a <__vector_12+0xf4>
 			start_bit = 0;
 			PORTB &= ~_BV(PORTB2);  //PORTB3 to PORTB2
 		}
 		else {
 			if (tx_bit_count<8){
-     eaa:	80 91 15 01 	lds	r24, 0x0115	; 0x800115 <tx_bit_count>
-     eae:	88 30       	cpi	r24, 0x08	; 8
-     eb0:	d8 f5       	brcc	.+118    	; 0xf28 <__vector_12+0xca>
+     fc2:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <tx_bit_count>
+     fc6:	88 30       	cpi	r24, 0x08	; 8
+     fc8:	d8 f5       	brcc	.+118    	; 0x1040 <__vector_12+0xca>
 				if (tx_char & (1<<tx_bit_count)){  //check the bit sending LSB first
-     eb2:	80 91 33 01 	lds	r24, 0x0133	; 0x800133 <tx_char>
-     eb6:	20 91 15 01 	lds	r18, 0x0115	; 0x800115 <tx_bit_count>
-     eba:	90 e0       	ldi	r25, 0x00	; 0
-     ebc:	02 c0       	rjmp	.+4      	; 0xec2 <__vector_12+0x64>
-     ebe:	95 95       	asr	r25
-     ec0:	87 95       	ror	r24
-     ec2:	2a 95       	dec	r18
-     ec4:	e2 f7       	brpl	.-8      	; 0xebe <__vector_12+0x60>
-     ec6:	80 ff       	sbrs	r24, 0
-     ec8:	3d c0       	rjmp	.+122    	; 0xf44 <__vector_12+0xe6>
+     fca:	80 91 34 01 	lds	r24, 0x0134	; 0x800134 <tx_char>
+     fce:	20 91 16 01 	lds	r18, 0x0116	; 0x800116 <tx_bit_count>
+     fd2:	90 e0       	ldi	r25, 0x00	; 0
+     fd4:	02 c0       	rjmp	.+4      	; 0xfda <__vector_12+0x64>
+     fd6:	95 95       	asr	r25
+     fd8:	87 95       	ror	r24
+     fda:	2a 95       	dec	r18
+     fdc:	e2 f7       	brpl	.-8      	; 0xfd6 <__vector_12+0x60>
+     fde:	80 ff       	sbrs	r24, 0
+     fe0:	3d c0       	rjmp	.+122    	; 0x105c <__vector_12+0xe6>
 					PORTB |= _BV(PORTB2);
-     eca:	32 9a       	sbi	0x06, 2	; 6
+     fe2:	32 9a       	sbi	0x06, 2	; 6
 				PORTB |= _BV(PORTB2);        //send stop bit
 				TIMSK0 &= ~(1<<OCIE0A);		//stop the bit timer
 				sending = 0;
 				PORTC |= _BV(PORTC6);
 			}
 			tx_bit_count++;
-     ecc:	80 91 15 01 	lds	r24, 0x0115	; 0x800115 <tx_bit_count>
-     ed0:	8f 5f       	subi	r24, 0xFF	; 255
-     ed2:	80 93 15 01 	sts	0x0115, r24	; 0x800115 <tx_bit_count>
+     fe4:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <tx_bit_count>
+     fe8:	8f 5f       	subi	r24, 0xFF	; 255
+     fea:	80 93 16 01 	sts	0x0116, r24	; 0x800116 <tx_bit_count>
 		
 	}
 	//
 	//sei();
 	
 }
-     ed6:	9f 91       	pop	r25
-     ed8:	8f 91       	pop	r24
-     eda:	5f 91       	pop	r21
-     edc:	4f 91       	pop	r20
-     ede:	3f 91       	pop	r19
-     ee0:	2f 91       	pop	r18
-     ee2:	0f 90       	pop	r0
-     ee4:	0f be       	out	0x3f, r0	; 63
-     ee6:	0f 90       	pop	r0
-     ee8:	1f 90       	pop	r1
-     eea:	18 95       	reti
+     fee:	9f 91       	pop	r25
+     ff0:	8f 91       	pop	r24
+     ff2:	5f 91       	pop	r21
+     ff4:	4f 91       	pop	r20
+     ff6:	3f 91       	pop	r19
+     ff8:	2f 91       	pop	r18
+     ffa:	0f 90       	pop	r0
+     ffc:	0f be       	out	0x3f, r0	; 63
+     ffe:	0f 90       	pop	r0
+    1000:	1f 90       	pop	r1
+    1002:	18 95       	reti
 		if (start_bit)	{
 			start_bit--;
 			//skip first bit
 		}
 		else {	
 			if (rcv_bit_count-1 > 0) {     //looking for data) 
-     eec:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <rcv_bit_count>
-     ef0:	90 e0       	ldi	r25, 0x00	; 0
-     ef2:	02 97       	sbiw	r24, 0x02	; 2
-     ef4:	94 f1       	brlt	.+100    	; 0xf5a <__vector_12+0xfc>
+    1004:	80 91 27 01 	lds	r24, 0x0127	; 0x800127 <rcv_bit_count>
+    1008:	90 e0       	ldi	r25, 0x00	; 0
+    100a:	02 97       	sbiw	r24, 0x02	; 2
+    100c:	94 f1       	brlt	.+100    	; 0x1072 <__vector_12+0xfc>
 				rcv_char |= ((PINB & (1<<3))>>3)<<(9-rcv_bit_count);  //from (1<<2) to (1<<3)
-     ef6:	84 b1       	in	r24, 0x04	; 4
-     ef8:	50 91 26 01 	lds	r21, 0x0126	; 0x800126 <rcv_bit_count>
-     efc:	40 91 1f 01 	lds	r20, 0x011F	; 0x80011f <rcv_char>
-     f00:	83 fb       	bst	r24, 3
-     f02:	22 27       	eor	r18, r18
-     f04:	20 f9       	bld	r18, 0
-     f06:	89 e0       	ldi	r24, 0x09	; 9
-     f08:	90 e0       	ldi	r25, 0x00	; 0
-     f0a:	85 1b       	sub	r24, r21
-     f0c:	91 09       	sbc	r25, r1
-     f0e:	01 c0       	rjmp	.+2      	; 0xf12 <__vector_12+0xb4>
-     f10:	22 0f       	add	r18, r18
-     f12:	8a 95       	dec	r24
-     f14:	ea f7       	brpl	.-6      	; 0xf10 <__vector_12+0xb2>
-     f16:	24 2b       	or	r18, r20
-     f18:	20 93 1f 01 	sts	0x011F, r18	; 0x80011f <rcv_char>
+    100e:	84 b1       	in	r24, 0x04	; 4
+    1010:	50 91 27 01 	lds	r21, 0x0127	; 0x800127 <rcv_bit_count>
+    1014:	40 91 20 01 	lds	r20, 0x0120	; 0x800120 <rcv_char>
+    1018:	83 fb       	bst	r24, 3
+    101a:	22 27       	eor	r18, r18
+    101c:	20 f9       	bld	r18, 0
+    101e:	89 e0       	ldi	r24, 0x09	; 9
+    1020:	90 e0       	ldi	r25, 0x00	; 0
+    1022:	85 1b       	sub	r24, r21
+    1024:	91 09       	sbc	r25, r1
+    1026:	01 c0       	rjmp	.+2      	; 0x102a <__vector_12+0xb4>
+    1028:	22 0f       	add	r18, r18
+    102a:	8a 95       	dec	r24
+    102c:	ea f7       	brpl	.-6      	; 0x1028 <__vector_12+0xb2>
+    102e:	24 2b       	or	r18, r20
+    1030:	20 93 20 01 	sts	0x0120, r18	; 0x800120 <rcv_char>
 				//PCICR |= _BV(PCIE1);
 				PORTC |= _BV(PORTC6);
 				receiving = 0;
 				//return;
 			}
 			rcv_bit_count--;
-     f1c:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <rcv_bit_count>
-     f20:	81 50       	subi	r24, 0x01	; 1
-     f22:	80 93 26 01 	sts	0x0126, r24	; 0x800126 <rcv_bit_count>
-     f26:	b8 cf       	rjmp	.-144    	; 0xe98 <__vector_12+0x3a>
+    1034:	80 91 27 01 	lds	r24, 0x0127	; 0x800127 <rcv_bit_count>
+    1038:	81 50       	subi	r24, 0x01	; 1
+    103a:	80 93 27 01 	sts	0x0127, r24	; 0x800127 <rcv_bit_count>
+    103e:	b8 cf       	rjmp	.-144    	; 0xfb0 <__vector_12+0x3a>
 				}
 				else{
 					PORTB &= ~_BV(PORTB2);
 				}
 			}
 			else if (tx_bit_count == 8){
-     f28:	80 91 15 01 	lds	r24, 0x0115	; 0x800115 <tx_bit_count>
-     f2c:	88 30       	cpi	r24, 0x08	; 8
-     f2e:	71 f6       	brne	.-100    	; 0xecc <__vector_12+0x6e>
+    1040:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <tx_bit_count>
+    1044:	88 30       	cpi	r24, 0x08	; 8
+    1046:	71 f6       	brne	.-100    	; 0xfe4 <__vector_12+0x6e>
 				PORTB |= _BV(PORTB2);        //send stop bit
-     f30:	32 9a       	sbi	0x06, 2	; 6
+    1048:	32 9a       	sbi	0x06, 2	; 6
 				TIMSK0 &= ~(1<<OCIE0A);		//stop the bit timer
-     f32:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     f36:	8d 7f       	andi	r24, 0xFD	; 253
-     f38:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+    104a:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+    104e:	8d 7f       	andi	r24, 0xFD	; 253
+    1050:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
 				sending = 0;
-     f3c:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <sending>
+    1054:	10 92 18 01 	sts	0x0118, r1	; 0x800118 <sending>
 				PORTC |= _BV(PORTC6);
-     f40:	56 9a       	sbi	0x0a, 6	; 10
-     f42:	c4 cf       	rjmp	.-120    	; 0xecc <__vector_12+0x6e>
+    1058:	56 9a       	sbi	0x0a, 6	; 10
+    105a:	c4 cf       	rjmp	.-120    	; 0xfe4 <__vector_12+0x6e>
 			if (tx_bit_count<8){
 				if (tx_char & (1<<tx_bit_count)){  //check the bit sending LSB first
 					PORTB |= _BV(PORTB2);
 				}
 				else{
 					PORTB &= ~_BV(PORTB2);
-     f44:	32 98       	cbi	0x06, 2	; 6
+    105c:	32 98       	cbi	0x06, 2	; 6
 				PORTB |= _BV(PORTB2);        //send stop bit
 				TIMSK0 &= ~(1<<OCIE0A);		//stop the bit timer
 				sending = 0;
 				PORTC |= _BV(PORTC6);
 			}
 			tx_bit_count++;
-     f46:	80 91 15 01 	lds	r24, 0x0115	; 0x800115 <tx_bit_count>
-     f4a:	8f 5f       	subi	r24, 0xFF	; 255
-     f4c:	80 93 15 01 	sts	0x0115, r24	; 0x800115 <tx_bit_count>
-     f50:	c2 cf       	rjmp	.-124    	; 0xed6 <__vector_12+0x78>
+    105e:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <tx_bit_count>
+    1062:	8f 5f       	subi	r24, 0xFF	; 255
+    1064:	80 93 16 01 	sts	0x0116, r24	; 0x800116 <tx_bit_count>
+    1068:	c2 cf       	rjmp	.-124    	; 0xfee <__vector_12+0x78>
 			rcv_bit_count--;
 		}
 	}
 	if (sending){
 		if (start_bit == 1)	{
 			start_bit = 0;
-     f52:	10 92 18 01 	sts	0x0118, r1	; 0x800118 <start_bit>
+    106a:	10 92 19 01 	sts	0x0119, r1	; 0x800119 <start_bit>
 			PORTB &= ~_BV(PORTB2);  //PORTB3 to PORTB2
-     f56:	32 98       	cbi	0x06, 2	; 6
-     f58:	be cf       	rjmp	.-132    	; 0xed6 <__vector_12+0x78>
+    106e:	32 98       	cbi	0x06, 2	; 6
+    1070:	be cf       	rjmp	.-132    	; 0xfee <__vector_12+0x78>
 		else {	
 			if (rcv_bit_count-1 > 0) {     //looking for data) 
 				rcv_char |= ((PINB & (1<<3))>>3)<<(9-rcv_bit_count);  //from (1<<2) to (1<<3)
 				//rcv[9-rcv_bit_count] = (PINB & (1<<3))>>3;
 			}
 			else if (rcv_bit_count == 0) {  //looking for stop bit
-     f5a:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <rcv_bit_count>
-     f5e:	81 11       	cpse	r24, r1
-     f60:	dd cf       	rjmp	.-70     	; 0xf1c <__vector_12+0xbe>
+    1072:	80 91 27 01 	lds	r24, 0x0127	; 0x800127 <rcv_bit_count>
+    1076:	81 11       	cpse	r24, r1
+    1078:	dd cf       	rjmp	.-70     	; 0x1034 <__vector_12+0xbe>
 				if (PINB & (1<<PINB3)) {    //PINB2 to PINB3
 					rcv_valid = 1;
-     f62:	81 e0       	ldi	r24, 0x01	; 1
+    107a:	81 e0       	ldi	r24, 0x01	; 1
 			if (rcv_bit_count-1 > 0) {     //looking for data) 
 				rcv_char |= ((PINB & (1<<3))>>3)<<(9-rcv_bit_count);  //from (1<<2) to (1<<3)
 				//rcv[9-rcv_bit_count] = (PINB & (1<<3))>>3;
 			}
 			else if (rcv_bit_count == 0) {  //looking for stop bit
 				if (PINB & (1<<PINB3)) {    //PINB2 to PINB3
-     f64:	23 9b       	sbis	0x04, 3	; 4
-     f66:	14 c0       	rjmp	.+40     	; 0xf90 <__vector_12+0x132>
+    107c:	23 9b       	sbis	0x04, 3	; 4
+    107e:	14 c0       	rjmp	.+40     	; 0x10a8 <__vector_12+0x132>
 					rcv_valid = 1;
-     f68:	80 93 23 01 	sts	0x0123, r24	; 0x800123 <rcv_valid>
+    1080:	80 93 24 01 	sts	0x0124, r24	; 0x800124 <rcv_valid>
 					AVR_LED_PORT ^= _BV(AVR_LED_RED_BIT);
-     f6c:	92 b1       	in	r25, 0x02	; 2
-     f6e:	88 e0       	ldi	r24, 0x08	; 8
-     f70:	89 27       	eor	r24, r25
-     f72:	82 b9       	out	0x02, r24	; 2
+    1084:	92 b1       	in	r25, 0x02	; 2
+    1086:	88 e0       	ldi	r24, 0x08	; 8
+    1088:	89 27       	eor	r24, r25
+    108a:	82 b9       	out	0x02, r24	; 2
 				}
 				else {
 					rcv_error_stop = 1;
 				}
 				TIMSK0 &= ~(1<<OCIE0A);		//stop the bit timer
-     f74:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
-     f78:	8d 7f       	andi	r24, 0xFD	; 253
-     f7a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+    108c:	80 91 6e 00 	lds	r24, 0x006E	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
+    1090:	8d 7f       	andi	r24, 0xFD	; 253
+    1092:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__EEPROM_REGION_LENGTH__+0x7f006e>
 				PCMSK1 |= _BV(PCINT11);		//enable start bit detect INT10 to INT11
-     f7e:	80 91 6c 00 	lds	r24, 0x006C	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
-     f82:	88 60       	ori	r24, 0x08	; 8
-     f84:	80 93 6c 00 	sts	0x006C, r24	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
+    1096:	80 91 6c 00 	lds	r24, 0x006C	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
+    109a:	88 60       	ori	r24, 0x08	; 8
+    109c:	80 93 6c 00 	sts	0x006C, r24	; 0x80006c <__EEPROM_REGION_LENGTH__+0x7f006c>
 				//PCICR |= _BV(PCIE1);
 				PORTC |= _BV(PORTC6);
-     f88:	56 9a       	sbi	0x0a, 6	; 10
+    10a0:	56 9a       	sbi	0x0a, 6	; 10
 				receiving = 0;
-     f8a:	10 92 24 01 	sts	0x0124, r1	; 0x800124 <receiving>
-     f8e:	c6 cf       	rjmp	.-116    	; 0xf1c <__vector_12+0xbe>
+    10a2:	10 92 25 01 	sts	0x0125, r1	; 0x800125 <receiving>
+    10a6:	c6 cf       	rjmp	.-116    	; 0x1034 <__vector_12+0xbe>
 				if (PINB & (1<<PINB3)) {    //PINB2 to PINB3
 					rcv_valid = 1;
 					AVR_LED_PORT ^= _BV(AVR_LED_RED_BIT);
 				}
 				else {
 					rcv_error_stop = 1;
-     f90:	80 93 13 01 	sts	0x0113, r24	; 0x800113 <rcv_error_stop>
-     f94:	ef cf       	rjmp	.-34     	; 0xf74 <__vector_12+0x116>
+    10a8:	80 93 13 01 	sts	0x0113, r24	; 0x800113 <rcv_error_stop>
+    10ac:	ef cf       	rjmp	.-34     	; 0x108c <__vector_12+0x116>
 
-00000f96 <__vector_9>:
+000010ae <__vector_9>:
 	//sei();
 	
 }
 
 ISR (TIMER1_COMPA_vect)
 {
-     f96:	1f 92       	push	r1
-     f98:	0f 92       	push	r0
-     f9a:	0f b6       	in	r0, 0x3f	; 63
-     f9c:	0f 92       	push	r0
-     f9e:	11 24       	eor	r1, r1
-     fa0:	8f 93       	push	r24
-     fa2:	ef 93       	push	r30
-     fa4:	ff 93       	push	r31
+    10ae:	1f 92       	push	r1
+    10b0:	0f 92       	push	r0
+    10b2:	0f b6       	in	r0, 0x3f	; 63
+    10b4:	0f 92       	push	r0
+    10b6:	11 24       	eor	r1, r1
+    10b8:	8f 93       	push	r24
+    10ba:	ef 93       	push	r30
+    10bc:	ff 93       	push	r31
 	/*disable interrupts, should we or allow NMI of tamper switch detect? */
 	//cli();
 	//sei();
 	TCNT1 = 0x00;
-     fa6:	10 92 85 00 	sts	0x0085, r1	; 0x800085 <__EEPROM_REGION_LENGTH__+0x7f0085>
-     faa:	10 92 84 00 	sts	0x0084, r1	; 0x800084 <__EEPROM_REGION_LENGTH__+0x7f0084>
+    10be:	10 92 85 00 	sts	0x0085, r1	; 0x800085 <__EEPROM_REGION_LENGTH__+0x7f0085>
+    10c2:	10 92 84 00 	sts	0x0084, r1	; 0x800084 <__EEPROM_REGION_LENGTH__+0x7f0084>
 	int i;
 	//PORTC ^= _BV(PORTC6);		//toggle gp6 to check on progress
 	TIMSK1 &= ~(1<<OCIE1A);		//stop the  timer
-     fae:	ef e6       	ldi	r30, 0x6F	; 111
-     fb0:	f0 e0       	ldi	r31, 0x00	; 0
-     fb2:	80 81       	ld	r24, Z
-     fb4:	8d 7f       	andi	r24, 0xFD	; 253
-     fb6:	80 83       	st	Z, r24
+    10c6:	ef e6       	ldi	r30, 0x6F	; 111
+    10c8:	f0 e0       	ldi	r31, 0x00	; 0
+    10ca:	80 81       	ld	r24, Z
+    10cc:	8d 7f       	andi	r24, 0xFD	; 253
+    10ce:	80 83       	st	Z, r24
 	usart_to = 0;
 	
-     fb8:	ff 91       	pop	r31
-     fba:	ef 91       	pop	r30
-     fbc:	8f 91       	pop	r24
-     fbe:	0f 90       	pop	r0
-     fc0:	0f be       	out	0x3f, r0	; 63
-     fc2:	0f 90       	pop	r0
-     fc4:	1f 90       	pop	r1
-     fc6:	18 95       	reti
+    10d0:	ff 91       	pop	r31
+    10d2:	ef 91       	pop	r30
+    10d4:	8f 91       	pop	r24
+    10d6:	0f 90       	pop	r0
+    10d8:	0f be       	out	0x3f, r0	; 63
+    10da:	0f 90       	pop	r0
+    10dc:	1f 90       	pop	r1
+    10de:	18 95       	reti
 
-00000fc8 <__divmodhi4>:
-     fc8:	97 fb       	bst	r25, 7
-     fca:	07 2e       	mov	r0, r23
-     fcc:	16 f4       	brtc	.+4      	; 0xfd2 <__divmodhi4+0xa>
-     fce:	00 94       	com	r0
-     fd0:	06 d0       	rcall	.+12     	; 0xfde <__divmodhi4_neg1>
-     fd2:	77 fd       	sbrc	r23, 7
-     fd4:	08 d0       	rcall	.+16     	; 0xfe6 <__divmodhi4_neg2>
-     fd6:	0b d0       	rcall	.+22     	; 0xfee <__udivmodhi4>
-     fd8:	07 fc       	sbrc	r0, 7
-     fda:	05 d0       	rcall	.+10     	; 0xfe6 <__divmodhi4_neg2>
-     fdc:	3e f4       	brtc	.+14     	; 0xfec <__divmodhi4_exit>
+000010e0 <__divmodhi4>:
+    10e0:	97 fb       	bst	r25, 7
+    10e2:	07 2e       	mov	r0, r23
+    10e4:	16 f4       	brtc	.+4      	; 0x10ea <__divmodhi4+0xa>
+    10e6:	00 94       	com	r0
+    10e8:	06 d0       	rcall	.+12     	; 0x10f6 <__divmodhi4_neg1>
+    10ea:	77 fd       	sbrc	r23, 7
+    10ec:	08 d0       	rcall	.+16     	; 0x10fe <__divmodhi4_neg2>
+    10ee:	0b d0       	rcall	.+22     	; 0x1106 <__udivmodhi4>
+    10f0:	07 fc       	sbrc	r0, 7
+    10f2:	05 d0       	rcall	.+10     	; 0x10fe <__divmodhi4_neg2>
+    10f4:	3e f4       	brtc	.+14     	; 0x1104 <__divmodhi4_exit>
 
-00000fde <__divmodhi4_neg1>:
-     fde:	90 95       	com	r25
-     fe0:	81 95       	neg	r24
-     fe2:	9f 4f       	sbci	r25, 0xFF	; 255
-     fe4:	08 95       	ret
+000010f6 <__divmodhi4_neg1>:
+    10f6:	90 95       	com	r25
+    10f8:	81 95       	neg	r24
+    10fa:	9f 4f       	sbci	r25, 0xFF	; 255
+    10fc:	08 95       	ret
 
-00000fe6 <__divmodhi4_neg2>:
-     fe6:	70 95       	com	r23
-     fe8:	61 95       	neg	r22
-     fea:	7f 4f       	sbci	r23, 0xFF	; 255
+000010fe <__divmodhi4_neg2>:
+    10fe:	70 95       	com	r23
+    1100:	61 95       	neg	r22
+    1102:	7f 4f       	sbci	r23, 0xFF	; 255
 
-00000fec <__divmodhi4_exit>:
-     fec:	08 95       	ret
+00001104 <__divmodhi4_exit>:
+    1104:	08 95       	ret
 
-00000fee <__udivmodhi4>:
-     fee:	aa 1b       	sub	r26, r26
-     ff0:	bb 1b       	sub	r27, r27
-     ff2:	51 e1       	ldi	r21, 0x11	; 17
-     ff4:	07 c0       	rjmp	.+14     	; 0x1004 <__udivmodhi4_ep>
+00001106 <__udivmodhi4>:
+    1106:	aa 1b       	sub	r26, r26
+    1108:	bb 1b       	sub	r27, r27
+    110a:	51 e1       	ldi	r21, 0x11	; 17
+    110c:	07 c0       	rjmp	.+14     	; 0x111c <__udivmodhi4_ep>
 
-00000ff6 <__udivmodhi4_loop>:
-     ff6:	aa 1f       	adc	r26, r26
-     ff8:	bb 1f       	adc	r27, r27
-     ffa:	a6 17       	cp	r26, r22
-     ffc:	b7 07       	cpc	r27, r23
-     ffe:	10 f0       	brcs	.+4      	; 0x1004 <__udivmodhi4_ep>
-    1000:	a6 1b       	sub	r26, r22
-    1002:	b7 0b       	sbc	r27, r23
+0000110e <__udivmodhi4_loop>:
+    110e:	aa 1f       	adc	r26, r26
+    1110:	bb 1f       	adc	r27, r27
+    1112:	a6 17       	cp	r26, r22
+    1114:	b7 07       	cpc	r27, r23
+    1116:	10 f0       	brcs	.+4      	; 0x111c <__udivmodhi4_ep>
+    1118:	a6 1b       	sub	r26, r22
+    111a:	b7 0b       	sbc	r27, r23
 
-00001004 <__udivmodhi4_ep>:
-    1004:	88 1f       	adc	r24, r24
-    1006:	99 1f       	adc	r25, r25
-    1008:	5a 95       	dec	r21
-    100a:	a9 f7       	brne	.-22     	; 0xff6 <__udivmodhi4_loop>
-    100c:	80 95       	com	r24
-    100e:	90 95       	com	r25
-    1010:	bc 01       	movw	r22, r24
-    1012:	cd 01       	movw	r24, r26
-    1014:	08 95       	ret
+0000111c <__udivmodhi4_ep>:
+    111c:	88 1f       	adc	r24, r24
+    111e:	99 1f       	adc	r25, r25
+    1120:	5a 95       	dec	r21
+    1122:	a9 f7       	brne	.-22     	; 0x110e <__udivmodhi4_loop>
+    1124:	80 95       	com	r24
+    1126:	90 95       	com	r25
+    1128:	bc 01       	movw	r22, r24
+    112a:	cd 01       	movw	r24, r26
+    112c:	08 95       	ret
 
-00001016 <_exit>:
-    1016:	f8 94       	cli
+0000112e <_exit>:
+    112e:	f8 94       	cli
 
-00001018 <__stop_program>:
-    1018:	ff cf       	rjmp	.-2      	; 0x1018 <__stop_program>
+00001130 <__stop_program>:
+    1130:	ff cf       	rjmp	.-2      	; 0x1130 <__stop_program>

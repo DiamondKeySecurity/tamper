@@ -130,6 +130,7 @@ static uint8_t unk_fault;
 static uint8_t fault_code;
 static uint8_t fault_value1;
 static uint8_t fault_value2;
+volatile uint8_t sent;
 
 volatile uint8_t rcv[9];
 

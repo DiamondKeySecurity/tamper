@@ -556,8 +556,9 @@ main()
 			start_bit = 1;
 			process_message();
 		}
-		check_usart_faults();
+		
 		if (configured == 0x55) {
+			check_usart_faults();
 			/*read the ssp lines for events */
 			//ssp_status = ssp_read_byte();
 			//if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
@@ -751,6 +752,7 @@ void process_message(){
 		send ((uint8_t) temperature>>8);
 		send ((uint8_t)temperature&0xFF);
 		send(0x14);
+		
 	}
 	if (rcv_char == SET_CONFIG) {
 		rcv_valid = 0;
@@ -785,6 +787,7 @@ void send(uint8_t tx){
 	sending = 1;
 	TCNT0 = 0x00;						//reset counter to avoid glitch on next rcv char.
 	TIMSK0 |= (1<<OCIE0A);
+	while(sending);
 }
 
 void check_usart_faults(){
