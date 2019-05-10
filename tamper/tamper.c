@@ -742,7 +742,7 @@ void process_message(){
 	if (rcv_char == CHK_LIGHT) {
 		rcv_valid = 0;
 		//fix for 16 bit word
-		send ((uint8_t) light>>8);
+		send (light>>8);
 		send ((uint8_t) light&0xFF);
 		send(0x14);
 	}
