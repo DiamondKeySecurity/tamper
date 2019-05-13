@@ -749,7 +749,7 @@ void process_message(){
 	if (rcv_char == CHK_TEMP) {
 		rcv_valid = 0;
 		//fix for 16 bit word
-		send ((uint8_t) temperature>>8);
+		send (temperature>>8);
 		send ((uint8_t)temperature&0xFF);
 		send(0x14);
 		
