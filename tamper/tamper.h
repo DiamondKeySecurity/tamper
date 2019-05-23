@@ -121,7 +121,7 @@ volatile uint8_t calib1;
 volatile uint8_t calib2;
 static uint8_t flags;
 static uint8_t configured;
-static uint8_t usart_to;
+volatile uint8_t usart_to;
 static uint8_t ssp_fault;
 static uint8_t vibe_fault;
 static uint8_t light_fault;
