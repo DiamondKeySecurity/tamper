@@ -55,7 +55,7 @@ void mlx_get_meas()
 	light |= USART_Receive(0, LIGHT); 
 	mlx_chip_select(0);
 	//the calibrated temp output
-	temperature = 30 + (((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
+		temperature = 30 + (((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
 }
 
 void mlx_setup()
@@ -67,7 +67,16 @@ void mlx_setup()
 	USART_Receive(MLX_CH_EN_ADDP, LIGHT);
 	mlx_chip_select(0);
 }
-
+void mlx_write_reg(uint8_t reg, uint8_t value )
+{
+	/* MLX chip setup enable temp and Ambient Ch. C */
+	int Control1 = 0x87;	int Control2 = value;	int Control3;	int i = 1;	int ParityCheckSum = 1;	int Counter = 0;	while (i <= 12)	{		if (ParityCheckSum & ((value*16) + reg))		{			Counter++;		}		ParityCheckSum = ParityCheckSum << 1;		i++;	}	if (Counter % 2 == 0)	{		Control3 = ((reg<<4) & 0xF0) + 8;	}	else	{		Control3 = ((reg<<4) & 0xF0) + 4;	}
+	mlx_chip_select(1);
+	USART_Receive((uint8_t) Control1, LIGHT);
+	USART_Receive((uint8_t) Control2, LIGHT);
+	USART_Receive(uint8_t) Control3, LIGHT);
+	mlx_chip_select(0);
+}
 void mlx_get_calib()
 {
 	/* MLX chip get temp and ambient chan values */

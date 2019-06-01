@@ -499,8 +499,8 @@ main()
    TCNT1 = 0x00;
    TCCR1A = (1<<COM1A1) | (1 << WGM01);             //CTC mode
    TCCR1B = (1 << CS00);              //div1
-   OCR1A = 180;						// 208us compare value for 4800 baud
- // spi_usart_setup(1);
+   OCR1A = 2000;						// 208us compare value for 4800 baud
+  spi_usart_setup(1);
  
   //put mlx to sleep as soon as possible to avoid wdog reset
  /* mlx_reset();
@@ -515,8 +515,8 @@ main()
   adx_wr_reg(ADX_POWER_CTL, 0x00);
   adx_rd_reg(ADX_STATUS);*/
  
-  /*ssp_boot();
-  //ssp_read_byte();
+  ssp_boot();
+  ssp_read_byte();
   //setup directions for ssp pins
   ssp_setup();
   //cycle the TAMP_CLR to reset the relays and turn of LEDS
@@ -527,15 +527,20 @@ main()
   //ssp_int_config();
  uint8_t check =  ssp_read_byte();
   //init_int0();
-  mlx_sleep();
+  //mlx_sleep();
   // do not need to configure these for tamper switch only 
   adx_setup();
+  mlx_reset();
+ // mlx_setup();
   mlx_setup();
+// mlx_write_reg(13, 0x94);
+  mlx_start_meas();
+  mlx_start_meas();
   mlx_start_meas();
   
   //initTimer1(TWD_INIT);
   
-  mkm_release();*/
+  mkm_release();
   /* Flash LED's at startup. */
   AVR_LED_PORT |= 0x0f;
   for (int i = 0; i < 16000; i++);
@@ -544,7 +549,7 @@ main()
   //sleep();
   temperature = 80;
   light = 0xaa55;
-  
+  init_int0();
   rcv_valid = 0;
   sei();
   while (1)
@@ -571,6 +576,7 @@ main()
 			}
 			//}
 			//read light and temp
+			mlx_start_meas();
 			mlx_get_meas();
 			//if temp is out side normal storage or sensor is exposed to bright light
 			//actual values 1TBD 

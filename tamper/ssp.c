@@ -43,7 +43,8 @@ spi_usart_setup(int on_flag){
 		DDRC = (1<<DDRC0) | (1<<DDRC4) | (1<<DDRC5) | (1<<DDRC6) | (1<<DDRC7);
 		
 		/*set USART to Master, SPI mode 0*/
-		UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<UCPOL);
+		UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<<UCPOL);
+		//UCSRC &= ~(1<<UCSZ0);
 		/*Enable receiver and transmitter */
 		UCSRB = (1<<RXEN)|(1<<TXEN);
 		/*set baud rate */
@@ -74,10 +75,10 @@ USART_Receive (uint8_t data, uint8_t source)
 	TIMSK1 |= (1<<OCIE1A);
 	/* wait for empty transmit buffer */
 	while (!(UCSRA & (1<<UDRE))){
-		if (!usart_to){
+		/*if (!usart_to){
 			log_fault(source);
 			break;
-		}
+		}*/
 	}
 	/*put data into buffer, sends data */
 	UDR = data;
@@ -87,10 +88,10 @@ USART_Receive (uint8_t data, uint8_t source)
 	TIMSK1 |= (1<<OCIE1A);
 	/*wait for the data to be received */
 	while (!(UCSRA & (1<<RXC))){
-		if (!usart_to){
+		/*if (!usart_to){
 			log_fault(source);
 			break;
-		}
+		}*/
 	}
 	if(usart_to){
 		reset_fault(source);
