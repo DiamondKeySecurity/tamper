@@ -74,7 +74,7 @@ void mlx_write_reg(uint8_t reg, uint8_t value )
 	mlx_chip_select(1);
 	USART_Receive((uint8_t) Control1, LIGHT);
 	USART_Receive((uint8_t) Control2, LIGHT);
-	USART_Receive(uint8_t) Control3, LIGHT);
+	USART_Receive((uint8_t) Control3, LIGHT);
 	mlx_chip_select(0);
 }
 void mlx_get_calib()

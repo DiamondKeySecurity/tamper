@@ -12,7 +12,10 @@ tamper.d tamper.o: .././tamper.c \
  c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
  c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sleep.h \
- .././tamper.h .././optic.h .././accel.h .././ssp.h .././timer.h
+ c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\eeprom.h \
+ c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
+ .././tamper.h .././optic.h .././accel.h .././ssp.h .././timer.h \
+ .././n25.h
 
 c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h:
 
@@ -40,6 +43,10 @@ c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include
 
 c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sleep.h:
 
+c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\eeprom.h:
+
+c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
+
 .././tamper.h:
 
 .././optic.h:
@@ -49,3 +56,5 @@ c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include
 .././ssp.h:
 
 .././timer.h:
+
+.././n25.h:

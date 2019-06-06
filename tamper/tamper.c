@@ -275,7 +275,10 @@ ISR (INT0_vect)
 		ssp_write(TAMP_ON);
 		ssp_int_reset();   /*read INTFA reg to reset flag*/
 		mkm_grab();		   /*prevents FPGA from accessing MKM */
+		//To do: now disable case tamper (INT0_vect) interrupt until system is reset
+		EIMSK = 0x00;
 		sei();				/* re-enabling interrupts allows additional tamper trigger or tamper reset */
+		
 	}
 	//sleep_disable();
 }
@@ -388,9 +391,11 @@ init_tamper_values(uint8_t flags_set, uint8_t source)
 	}
 	if (flags & CASE) {
 		case_enable = 1;
+		init_int0();		/*enable INT0 */
 	}
 	else{
 		case_enable = 0;
+		EIMSK = 0x00;		/*dis-able INT0 */
 	}
 	/*light_thresh = eeprom_read_word((uint16_t *)LIGHT_PRE);
 	temp_hi_thresh = eeprom_read_word((uint16_t *)TEMP_PRE_HI);
@@ -409,6 +414,8 @@ init_int0()
 	EIMSK = 0x01;		/*enable INT0 */
 	//sei();
 }
+
+
 
 static void
 init_power_reduction()
@@ -494,11 +501,12 @@ main()
   TCNT0 = 0x00;
   TCCR0A = (1<<COM0A1) | (1 << WGM01);             //CTC mode
   TCCR0B = (1 << CS00);              //div1
-  OCR0A = 180;						// 208us compare value for 4800 baud
+  OCR0A = 153;						// 208us compare value for 4800 baud was 180
   
    TCNT1 = 0x00;
    TCCR1A = (1<<COM1A1) | (1 << WGM01);             //CTC mode
    TCCR1B = (1 << CS00);              //div1
+   //OCR1A = 2000;						// 208us compare value for 4800 baud
    OCR1A = 2000;						// 208us compare value for 4800 baud
   spi_usart_setup(1);
  
@@ -549,7 +557,7 @@ main()
   //sleep();
   temperature = 80;
   light = 0xaa55;
-  init_int0();
+  //init_int0();
   rcv_valid = 0;
   sei();
   while (1)
@@ -560,6 +568,7 @@ main()
 			rcv_valid = 0;
 			start_bit = 1;
 			process_message();
+			send(0x15);
 		}
 		
 		if (configured == 0x55) {

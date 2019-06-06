@@ -10,7 +10,7 @@ ssp.d ssp.o: .././ssp.c \
  c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- .././ssp.h .././tamper.h .././accel.h .././optic.h
+ .././ssp.h .././tamper.h .././accel.h .././optic.h .././n25.h
 
 c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h:
 
@@ -41,3 +41,5 @@ c:\program\ files\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include
 .././accel.h:
 
 .././optic.h:
+
+.././n25.h:
