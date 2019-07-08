@@ -25,7 +25,7 @@
 #define MLX_SM			0xD0
 #define MLX_RS			0xF0
 #define MLX_RO			0xC3
-#define MLX_TEMP_AMB	0x60
+#define MLX_TEMP_AMB	0xC0
 #define MLX_WR			0x87
 #define MLX_RR			0x8E
 #define MLX_RSLP		0xE1

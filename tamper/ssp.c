@@ -44,6 +44,7 @@ spi_usart_setup(int on_flag){
 		
 		/*set USART to Master, SPI mode 0*/
 		UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<<UCPOL);
+		//UCSRC = (1<<UMSEL1)|(1<<UMSEL0); //|(1<<UCSZ0)|(1<<UCPOL);
 		//UCSRC &= ~(1<<UCSZ0);
 		/*Enable receiver and transmitter */
 		UCSRB = (1<<RXEN)|(1<<TXEN);
@@ -66,35 +67,75 @@ ssp_boot()
 	
 }
 
+volatile void
+reset_fault(uint8_t source){
+	switch(source){
+		case LIGHT:
+		light_fault = 0;
+		break;
+		case VIBE:
+		vibe_fault = 0;
+		break;
+		case SSP:
+		ssp_fault = 0;
+		break;
+		case N25:
+		n25_fault = 0;
+		break;
+		default:
+		unk_fault = 0;
+		break;
+	}
+}
+
+
 uint8_t
 USART_Receive (uint8_t data, uint8_t source)
 {
-	//start timer to exit us out
-	usart_to = 1;
-	TCNT1 = 0x00;
-	TIMSK1 |= (1<<OCIE1A);
-	/* wait for empty transmit buffer */
-	while (!(UCSRA & (1<<UDRE))){
-		/*if (!usart_to){
-			log_fault(source);
-			break;
-		}*/
-	}
-	/*put data into buffer, sends data */
-	UDR = data;
-	//start timer to exit us out
-	usart_to = 1;
-	TCNT1 = 0x00;
-	TIMSK1 |= (1<<OCIE1A);
-	/*wait for the data to be received */
-	while (!(UCSRA & (1<<RXC))){
-		/*if (!usart_to){
-			log_fault(source);
-			break;
-		}*/
-	}
-	if(usart_to){
-		reset_fault(source);
+	if(!spi_disable){
+		if (source== VIBE){
+			UCSRC = (1<<UMSEL1)|(1<<UMSEL0);
+			UCSRC &= ~(1<<UCSZ0);
+		}
+		else {
+			UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<<UCPOL);
+		}
+		//start timer to exit us out
+		//PORTC ^= _BV(PORTC6);
+		spi_to_flag = 1;
+		spi_to = 1;
+		TCNT0 = 0x00;
+		TIMSK0 |= (1<<OCIE0A);
+		/* wait for empty transmit buffer */
+		while (!(UCSRA & (1<<UDRE))){
+			if (!spi_to_flag){
+				log_fault(source);
+				break;
+			}
+		}
+		TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
+		TIFR0 |= (1<<OCF0A);
+		//PORTC ^= _BV(PORTC6);
+		/*put data into buffer, sends data */
+		UDR = data;
+		//start timer to exit us out
+		spi_to_flag = 1;
+		spi_to = 1;
+		TCNT0 = 0x00;
+		TIMSK0 |= (1<<OCIE0A);
+		/*wait for the data to be received */
+		while (!(UCSRA & (1<<RXC))){
+			if (!spi_to_flag){
+				log_fault(source);
+				break;
+			}
+		}
+		TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
+		TIFR0 |= (1<<OCF0A);
+		//PORTC ^= _BV(PORTC6);
+		if(spi_to_flag){		//spi comm successful, reset count
+			reset_fault(source);
+		}
 	}
 	return UDR;
 }
@@ -120,26 +161,6 @@ log_fault(uint8_t source){
 	}
 }
 
-void
-reset_fault(uint8_t source){
-	switch(source){
-		case LIGHT:
-		light_fault = 0;
-		break;
-		case VIBE:
-		vibe_fault = 0;
-		break;
-		case SSP:
-		ssp_fault = 0;
-		break;
-		case N25:
-		n25_fault = 0;
-		break;
-		default:
-		unk_fault = 0;
-		break;
-	}
-}
 
 void
 ssp_setup()

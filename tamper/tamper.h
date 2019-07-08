@@ -70,11 +70,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CHK_VIBE	0x49
 #define SET_CONFIG	0x4A
 #define CHK_TAMP	0x4B
-#define CHK_FAULT	0x4C	
+#define CHK_FAULT	0x4C
+#define CHK_VIBE_S	0x4D
+#define GET_VIBE_S	0x4E	
 
 #define LIGHT		0x01
 #define TEMP		0x02
 #define VIBE		0x04
+
 #define CASE		0x08
 #define SSP			0x10
 #define N25			0x20
@@ -93,7 +96,7 @@ void process_message();
 void send(uint8_t tx);
 volatile uint8_t ssp_out;
 volatile char wd_init;
-volatile int16_t temperature;
+volatile int32_t temperature;
 volatile uint16_t light;
 volatile uint8_t start_bit;
 volatile uint8_t sending;
@@ -109,6 +112,7 @@ volatile int16_t temp_hi_thresh;
 volatile int16_t temp_lo_thresh;
 volatile uint8_t vibe_lo_thresh;
 volatile uint8_t vibe_hi_thresh;
+volatile uint16_t vibe_thresh;
 volatile uint8_t light_status;
 volatile uint8_t temp_status;
 volatile uint8_t vibe_status;
@@ -117,21 +121,31 @@ volatile uint8_t temp_enable;
 volatile uint8_t vibe_enable;
 volatile uint8_t case_enable;
 volatile uint8_t tamper_detected;
-volatile uint8_t calib1;
-volatile uint8_t calib2;
+volatile uint8_t light_retrieve;
+volatile int8_t calib1;
+volatile int8_t calib2;
 static uint8_t flags;
 static uint8_t configured;
 volatile uint8_t usart_to;
-static uint8_t ssp_fault;
-static uint8_t vibe_fault;
-static uint8_t light_fault;
-static uint8_t n25_fault;
-static uint8_t unk_fault;
-static uint8_t fault_code;
-static uint8_t fault_value1;
-static uint8_t fault_value2;
+static volatile uint8_t ssp_fault;
+static volatile uint8_t vibe_fault;
+static volatile uint8_t light_fault;
+static volatile uint8_t n25_fault;
+static volatile uint8_t unk_fault;
+static volatile uint8_t fault_code;
+static volatile uint8_t fault_value1;
+static volatile uint8_t fault_value2;
 volatile uint8_t sent;
+volatile uint8_t spi_to;
+volatile uint8_t spi_to_flag;
+volatile uint8_t fifo_delay;
+volatile uint8_t fifo_delay_flag;
+volatile uint32_t tamper_delay;
+volatile uint8_t tamper_delay_flag;
+volatile uint8_t spi_disable;
+static volatile uint16_t samples;
 
 volatile uint8_t rcv[9];
+volatile static uint16_t fifo[30];
 
 #endif /* TAMPER_H_ */

@@ -43,19 +43,24 @@ void mlx_start_meas()
 
 void mlx_get_meas()
 {
-	int16_t temp_t;
+    uint16_t temp_t;
+	volatile uint8_t temp_1, temp_2; 
 	/* MLX chip get temp and ambient chan values */
 	mlx_chip_select(1);
 	USART_Receive(MLX_RO, LIGHT);
 	USART_Receive(0, LIGHT);
 	//read in values
-	temp_t = USART_Receive(0, LIGHT)<<8;
-	temp_t |= USART_Receive(0, LIGHT);
+	//temp_1 = USART_Receive(0, LIGHT)<<8;
+	temp_1 = USART_Receive(0, LIGHT);
+	temp_2 = USART_Receive(0, LIGHT);
+	temp_t = (uint16_t) temp_1*256  +(uint16_t) temp_2;
 	light =  USART_Receive(0, LIGHT)<<8;
 	light |= USART_Receive(0, LIGHT); 
 	mlx_chip_select(0);
 	//the calibrated temp output
-		temperature = 30 + (((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
+	//volatile double Numerator = ((11775 + (67 * ((double)calib2 - 32)))) - (double)temp_t;
+   // volatile double*   volatile double T = 30 + (Numerator/Denominator);
+		//temperature = 30 + (double)(((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
 }
 
 void mlx_setup()
@@ -77,6 +82,7 @@ void mlx_write_reg(uint8_t reg, uint8_t value )
 	USART_Receive((uint8_t) Control3, LIGHT);
 	mlx_chip_select(0);
 }
+
 void mlx_get_calib()
 {
 	/* MLX chip get temp and ambient chan values */

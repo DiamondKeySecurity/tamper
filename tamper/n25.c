@@ -31,10 +31,10 @@
 void n25_chip_select(int select_flag)
 {
 	if (select_flag) {
-		AVR_GPIO_PORT &= ~_BV(PORTC6); /* CS low. */
+		//AVR_GPIO_PORT &= ~_BV(PORTC6); /* CS low. */
 	}
 	else {
-		AVR_GPIO_PORT |= _BV(PORTC6); /* CS high. */
+		//AVR_GPIO_PORT |= _BV(PORTC6); /* CS high. */
 	}
 }
 

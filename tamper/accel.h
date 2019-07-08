@@ -23,14 +23,19 @@
 #define ADX_RD				0x0B
 #define ADX_FF				0x0D
 #define ADX_ACT				0x10
+#define ADX_ERR				0x80
 
 /*registers*/
 #define ADX_DEVID			0x00
-#define ADX_STATUS			0x0D
+#define ADX_STATUS			0x0B
+#define ADX_FIFO_ENTRIES	0x0C
 #define ADX_THRESH_ACT_L	0x20
 #define ADX_THRESH_ACT_H	0x21
 #define	ADX_TIME_ACT		0x22
 #define ADX_ACT_INACT_CTL	0x27
+#define ADX_FIFO_CONTROL	0x28
+#define ADX_FIFO_SAMPLES	0x29
+#define ADX_INTMAP1			0x2A
 #define ADX_INTMAP2			0x2B
 #define ADX_FILTER_CTL		0x2C
 #define ADX_POWER_CTL		0x2D
@@ -41,7 +46,10 @@ void adx_setup();
 uint8_t adx_read_status();
 void adx_chip_select(int select_flag);
 uint8_t adx_rd_reg(uint8_t reg);
-
-
+void adx_soft_r();
+void adx_temp();
+uint16_t adx_read_fifo_count();
+uint8_t adx_read_fifo_samples(uint8_t samples);
+void adx_set_threshold();
 
 #endif /* ACCEL_H_ */
