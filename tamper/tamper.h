@@ -73,6 +73,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CHK_FAULT	0x4C
 #define CHK_VIBE_S	0x4D
 #define GET_VIBE_S	0x4E	
+#define BATT_EN		0x4F
 
 #define LIGHT		0x01
 #define TEMP		0x02
@@ -80,7 +81,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define CASE		0x08
 #define SSP			0x10
-#define N25			0x20
+#define LL			0x20
 #define USART		0x40
 #define UNK			0x80
 #define TAMP_FLAGS	0x20
@@ -120,6 +121,7 @@ volatile uint8_t light_enable;
 volatile uint8_t temp_enable;
 volatile uint8_t vibe_enable;
 volatile uint8_t case_enable;
+volatile uint8_t ssp_enable;
 volatile uint8_t tamper_detected;
 volatile uint8_t light_retrieve;
 volatile int8_t calib1;
@@ -144,6 +146,13 @@ volatile uint32_t tamper_delay;
 volatile uint8_t tamper_delay_flag;
 volatile uint8_t spi_disable;
 static volatile uint16_t samples;
+volatile int16_t x, y, z;
+volatile uint8_t xlo, xhi, ylo, yhi, zlo, zhi;
+static volatile uint8_t batt_on;
+static volatile uint8_t batt_on_cnt;
+static volatile uint8_t temp_flt_cnt;
+static volatile uint8_t light_flt_cnt;
+static volatile uint8_t vibe_flt_cnt;
 
 volatile uint8_t rcv[9];
 volatile static uint16_t fifo[30];

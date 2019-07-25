@@ -233,17 +233,7 @@ spi_read_byte(uint16_t addr)
   spi_write(addr & 0xff00);
   spi_write(addr & 0x00ff);
   uint8_t data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
-  data = spi_read();
- 
+  
   mkm_chip_select(0);
   mkm_release();
   spi_setup(0);
@@ -274,7 +264,6 @@ ISR (INT0_vect)
 		/*TAMP_ON turns on LED and provides falling edge signal to Pi to indicate tamper event */
 		ssp_write(TAMP_ON);
 		ssp_int_reset();   /*read INTFA reg to reset flag*/
-		mkm_grab();		   /*prevents FPGA from accessing MKM */
 		//To do: now disable case tamper (INT0_vect) interrupt until system is reset
 		EIMSK = 0x00;
 		sei();				/* re-enabling interrupts allows additional tamper trigger or tamper reset */
@@ -312,8 +301,6 @@ ISR (PCINT1_vect)
 	spi_disable = 1;
 	TCNT1 = 0x00;
 	PCMSK1 &= ~_BV(PCINT11);
-	//PCICR &= ~_BV(PCIE1);
-	//PCIFR |= _BV(PCIF1);
 	rcv_error_stop = 0;
 	start_bit = 1;
 	rcv_bit_count = 9;   // TBD 7 or 8? look for the stop bit?
@@ -336,8 +323,6 @@ init_ports()
   /* Configure all PORTA pins except the tamper detection pin as
      outputs. */
   DDRA = 0xff & ~_BV(AVR_PANIC_BIT);
-  //DDRB = 0xff & ~_BV(PINB3);
-  //DDRB = 0xff & ~_BV(PINB2);
   DDRB = 0xf7; //was fb
 }
 
@@ -354,6 +339,7 @@ init_interrupts()
   /*setup PB2 as soft-UART RX*/
   //PUEB = (1<<PUEB3) | (1<<PUEB2);			/*enable internal pull-up to detect start bit */
   PUEB = (1<<PUEB3);
+  //PUEB |= (1<<PUEB2);
   PCMSK1 |= _BV(PCINT11);
  // PCMSK1 |= _BV(PCINT10);
   sei();
@@ -427,11 +413,11 @@ init_power_reduction()
 /*static inline*/ void
 mkm_wipe()
 {
-  AVR_LED_PORT |= _BV(AVR_LED_RED_BIT);
-
+  AVR_LED_PORT |= _BV(AVR_LED_GREEN_BIT);
+  tamper_detected = 1;
   spi_setup(1);
-  mkm_grab();
-
+  mkm_grab();		   /*prevents FPGA from accessing MKM */
+  
   mkm_chip_select(1);
   spi_set_operation(SPI_OPERATION_SEQUENCE);
   mkm_chip_select(0);
@@ -444,16 +430,16 @@ mkm_wipe()
     spi_write(0);
   mkm_chip_select(0);
 
-  mkm_release();
+  //mkm_release();                 //will release now by ENA_TAMP/DIS_TAMP command from SBC
   spi_setup(0);
 
-  AVR_LED_PORT &= ~_BV(AVR_LED_RED_BIT);
+  //AVR_LED_PORT &= ~_BV(AVR_LED_RED_BIT);
 
   /* Flash blue LED three times to indicate wipe is done */
-  for (volatile int x = 0; x < 6; x++) {
+  /*for (volatile int x = 0; x < 6; x++) {
     AVR_LED_PORT ^= _BV(AVR_LED_BLUE_BIT);
     for (volatile int i = 0; i < 3200; i++);
-  }
+  }*/
 }
 
 
@@ -480,7 +466,7 @@ main()
   flags = 0xFF;
   configured = 0;
   tamper_detected = 0;
-  uint8_t ssp_status = 0;
+  volatile uint8_t ssp_status = 0;
   sending = 0;
   receiving = 0;
   tx_char = 0;
@@ -492,7 +478,13 @@ main()
   unk_fault = 0;
   spi_disable = 0;
   light_retrieve = 0;
-  PORTB |= _BV(PORTB3);   //set TX idle high
+  batt_on = 0;
+  batt_on_cnt = 0;
+  temp_flt_cnt = 0;
+  light_flt_cnt = 0;
+  vibe_flt_cnt = 0;
+  PORTB |= _BV(PORTB3);   //set RX idle high
+  PORTB |= _BV(PORTB2);   //set TX idle high
   wd_init = 0x01;
   ssp_out = WDOG_RS;
   
@@ -505,8 +497,8 @@ main()
    TCNT1 = 0x00;
    TCCR1A = (1<<COM1A1) | (1 << WGM01);             //CTC mode
    TCCR1B = (1 << CS00);              //div1
-   OCR1A = 180;
-   //OCR1A = 153;						// 208us compare value for release 4800 baud was 180
+   //OCR1A = 180;
+   OCR1A = 171;						// 208us compare value for release 4800 baud was 180
    spi_usart_setup(1);
    vibe_lo_thresh = 0x20;
    vibe_hi_thresh = 0x07;
@@ -516,13 +508,12 @@ main()
  mlx_reset();
   mlx_request_sleep();
   mlx_confirm_sleep();
-  mlx_nop();
-  mlx_sleep();
+  mlx_nop 
   //ensure that adx is also at low power mode
 
   adx_wr_reg(ADX_POWER_CTL, 0x00);
   adx_rd_reg(ADX_STATUS);*/
- 
+  AVR_LED_PORT |= _BV(AVR_LED_BLUE_BIT);
   ssp_boot();
   ssp_read_byte();
   //setup directions for ssp pins
@@ -534,19 +525,21 @@ main()
   //setup the tamper monitoring input
   ssp_int_config();
  uint8_t check =  ssp_read_byte();
-  init_int0();
+  //init_int0();
  
   mlx_reset();
-    
   mlx_write_reg(13, 0x84); //enable temperature and Channel C
   mlx_get_calib();
-  mlx_start_meas();
+  /*mlx_start_meas();
   mlx_get_meas();
   mlx_start_meas();
   mlx_get_meas();
   mlx_start_meas();
-  mlx_get_meas(); 
+  mlx_get_meas(); */
   // do not need to configure these for tamper switch  
+  UCSRC = (1<<UMSEL1)|(1<<UMSEL0);  //change polarity first! 
+  UCSRC &= ~(1<<UCSZ0);				//before chip selects!!!!
+   
   adx_read_id();  
   adx_soft_r();
   adx_setup();
@@ -556,9 +549,9 @@ main()
   
   mkm_release();
   /* Flash LED's at startup. */
-  AVR_LED_PORT |= 0x0f;
-  for (int i = 0; i < 16000; i++);
-  AVR_LED_PORT &= ~0x0f;
+  //AVR_LED_PORT |= 0x0f;
+  //for (int i = 0; i < 16000; i++);
+  //AVR_LED_PORT &= ~0x0f;
   // go to sleep, interrupt will wake us
   //sleep();
   temperature = 80;
@@ -567,43 +560,98 @@ main()
   //init_int0();
   rcv_valid = 0;
   sei();
+  send(0x15);
   while (1)
     {
 		if (rcv_valid == 1){
 			rcv_valid = 0;
 			start_bit = 1;
 			process_message();
+			//send(0x15);
 		}
-		
+		//send(0x15);
 		if (configured == 0x55 && !spi_disable) {
+			AVR_LED_PORT &= ~_BV(AVR_LED_BLUE_BIT);
 			check_usart_faults();
 			/*read the ssp lines for events */
-			//ssp_status = ssp_read_byte();
-			//if ((ssp_status && LOW_VOLT)|(ssp_status && BATT_ON)) {
+			UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<<UCPOL);
+			//if (ssp)
+			ssp_status = ssp_read_byte();
+			//detect when BATT_ON signal goes low
+			if (!(ssp_status & 0x20)) {
 				//mkm_wipe();
-			//}
+				batt_on_cnt++;
+				if (batt_on_cnt>25){
+					batt_on = 1;
+				}
+				AVR_LED_PORT |= _BV(AVR_LED_YELLOW_BIT);
+			}
+			else {
+				batt_on_cnt = 0;
+				batt_on = 0;
+				AVR_LED_PORT &= ~_BV(AVR_LED_YELLOW_BIT);
+			}
+			//detect when low line (VBat <= 2.6VDC)
+			if (!(ssp_status & 0x01)) {
+				tamper_detected = 1;
+				fault_code = LL;
+			}
+			if (batt_on){
+				//re-purpose timer0 and set a throttle timer
+				//on spi comms
+				fifo_delay_flag = 1;
+				OCR0A = 200;
+				fifo_delay = 50;
+				TCNT0 = 0x00;
+				TIMSK0 |= (1<<OCIE0A);
+				while (fifo_delay_flag){};
+				TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
+				TIFR0 |= (1<<OCF0A);
+				OCR0A = 185;
+				AVR_LED_PORT &= ~_BV(AVR_LED_YELLOW_BIT);
+				mkm_grab();
+			}
+			else {
+				mkm_release();
+			}
 			//read accelerometer 
-			if (vibe_enable){
+			if (vibe_enable && !spi_disable){
+				UCSRC = (1<<UMSEL1)|(1<<UMSEL0); //!!!change SPI polarity here first before chip selects
+				UCSRC &= ~(1<<UCSZ0);			//!!!
 				uint8_t adx = adx_read_status();
 				if ((adx & ADX_ACT || adx & ADX_ERR )){
-					fault_code = VIBE;
-					mkm_wipe();
-					vibe_enable = 0;
-					//adx_read_fifo_samples();
+					vibe_flt_cnt++;
+					if (vibe_flt_cnt>3){
+						fault_code = VIBE;
+						mkm_wipe();
+						vibe_enable = 0;
+					}
+				}
+				else {
+					vibe_flt_cnt = 0;
 				}
 			}
-			if (temp_enable){
+			if (temp_enable && !spi_disable){
+				UCSRC = (1<<UMSEL1)|(1<<UMSEL0); //!!!change SPI polarity here first before chip selects
+				UCSRC &= ~(1<<UCSZ0);			//!!!
 				adx_temp();
 				if ((((temperature > temp_hi_thresh) | (temperature < temp_lo_thresh))) ){
-					fault_code = TEMP;
-					fault_value1 = ((uint8_t) temperature>>8);
-					fault_value2 = ((uint8_t) temperature&0xFF);
-					mkm_wipe();
-					temp_enable = 0;
+					temp_flt_cnt++;
+					if (temp_flt_cnt>3){
+						fault_code = TEMP;
+						fault_value1 = ((uint8_t) temperature>>8);
+						fault_value2 = ((uint8_t) temperature&0xFF);
+						mkm_wipe();
+						temp_enable = 0;
+					}
+				}
+				else{
+					temp_flt_cnt = 0;
 				}
 			}
 			//read light
-			if (light_enable){
+			if (light_enable && !spi_disable){
+				UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<<UCPOL);
 				//need a delay between start meas and get meas
 				if(!light_retrieve) {
 					mlx_start_meas();
@@ -611,15 +659,26 @@ main()
 				if (light_retrieve){
 					mlx_get_meas();
 				}
-				light_retrieve ^= light_retrieve;
+				if (light_retrieve){
+					light_retrieve = 0;
+				}
+				else {
+				    light_retrieve = 1;
+				}
 				//if temp is out side normal storage or sensor is exposed to bright light
 				//actual values TBD 
 				if((light > light_thresh)) {
-					fault_code = LIGHT;
-					fault_value1 = ((uint8_t) light>>8);
-					fault_value2 = ((uint8_t) light&0xFF);
-					mkm_wipe();
-					light_enable = 0;
+					light_flt_cnt++;
+						if (light_flt_cnt>3){
+							fault_code = LIGHT;
+							fault_value1 = ((uint8_t) light>>8);
+							fault_value2 = ((uint8_t) light&0xFF);
+							mkm_wipe();
+							light_enable = 0;
+					}
+				}
+				else{
+					light_flt_cnt = 0;
 				}
 			}
 			//if (panic_p())
@@ -651,7 +710,6 @@ void process_message(){
 			rcv_error_stop = 0;
 			light_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			light_temp = (uint16_t)rcv_char <<8;
@@ -662,7 +720,6 @@ void process_message(){
 		if (rcv_error_stop) {
 			light_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		} 
 		else{
 			light_temp |= (uint16_t)rcv_char;
@@ -672,7 +729,6 @@ void process_message(){
 			//eeprom_write_word((uint16_t *)LIGHT_PRE, light_thresh);
 			light_status = 0;
 			send(0x14);
-			spi_disable = 0;
 		}
 	}
 	if (rcv_char == SET_TEMP_HI) {
@@ -684,12 +740,10 @@ void process_message(){
 			rcv_error_stop = 0;
 			light_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			send(0x14);
 			temp_hi_thresh = rcv_char;
-			spi_disable = 0;
 			//eeprom_write_word((uint16_t *)TEMP_PRE_HI, temp_hi_thresh);
 		}
 	}
@@ -702,11 +756,9 @@ void process_message(){
 			rcv_error_stop = 0;
 			light_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			send(0x14);
-			spi_disable = 0;
 			temp_hi_thresh = rcv_char;
 			//eeprom_write_word((uint16_t *)TEMP_PRE_LO, temp_lo_thresh);
 		}
@@ -724,7 +776,6 @@ void process_message(){
 			rcv_error_stop = 0;
 			vibe_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			vibe_temp_lo = rcv_char;
@@ -735,7 +786,6 @@ void process_message(){
 		if (rcv_error_stop) {
 			vibe_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else{
 			vibe_temp_hi = rcv_char;
@@ -750,6 +800,8 @@ void process_message(){
 			send(0x14);
 			spi_disable = 0;
 			vibe_thresh = (uint16_t)vibe_hi_thresh<<8 | (uint16_t)vibe_lo_thresh;
+			 UCSRC = (1<<UMSEL1)|(1<<UMSEL0);  //change SPI clock phase/polarity first!
+			 UCSRC &= ~(1<<UCSZ0);				//before chip selects!!!!
 			adx_set_threshold();
 		}
 	}
@@ -762,14 +814,14 @@ void process_message(){
 			rcv_error_stop = 0;
 			light_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			//uint8_t flags = eeprom_read_byte((uint8_t *)TAMP_FLAGS);
-			flags &= rcv_char;
-			init_tamper_values(flags, 0);
+			flags |= rcv_char;
 			send(0x14);
-			spi_disable = 0;
+			init_tamper_values(flags, 0);
+			tamper_detected = 0;
+			mkm_release();
 		}
 	}
 	if (rcv_char == DIS_TAMP) {
@@ -781,14 +833,34 @@ void process_message(){
 			rcv_error_stop = 0;
 			light_status = 0;
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			//uint8_t flags = eeprom_read_byte((uint8_t *)TAMP_FLAGS);
 			flags &= ~rcv_char;
-			init_tamper_values(flags, 0);
 			send(0x14);
-			spi_disable = 0;
+			init_tamper_values(flags, 0);
+			tamper_detected = 0;
+			mkm_release();
+		}
+	}
+	if (rcv_char == BATT_EN) {
+		rcv_valid = 0;
+		//fix for 16 bit word
+		while (!rcv_valid & !rcv_error_stop){ }
+		rcv_valid = 0;
+		if (rcv_error_stop ==1) {
+			rcv_error_stop = 0;
+			send(0x15);
+		}
+		else {
+			//BATT_ON signal needs to be asserted for backup to work
+			if(rcv_char){
+				PORTC |= _BV(PORTC6);
+			}
+			else {
+				PORTC &= ~_BV(PORTC6);
+			}
+			send(0x14);
 		}
 	}
 	if (rcv_char == CHK_LIGHT) {
@@ -797,7 +869,6 @@ void process_message(){
 		send (light>>8);
 		send ((uint8_t) light&0xFF);
 		send(0x14);
-		spi_disable = 0;
 	}
 	if (rcv_char == CHK_TEMP) {
 		rcv_valid = 0;
@@ -805,8 +876,6 @@ void process_message(){
 		send (temperature>>8);
 		send ((uint8_t)temperature&0xFF);
 		send(0x14);
-		spi_disable = 0;
-		
 	}
 	if (rcv_char == CHK_VIBE_S) {
 		rcv_valid = 0;
@@ -815,29 +884,17 @@ void process_message(){
 		send (samples>>8);
 		send ((uint8_t)samples&0xFF);
 		send(0x14);
-		spi_disable = 0;
 	}
 	if (rcv_char == GET_VIBE_S) {
 		rcv_valid = 0;
 		//fix for 16 bit word
-		while (!rcv_valid & !rcv_error_stop){ }
-		rcv_valid = 0;
-		if (rcv_error_stop ==1) {
-			rcv_error_stop = 0;
-			send(0x15);
-			spi_disable = 0;
-		}
-		else {
-			samples = rcv_char;
-			adx_read_fifo_samples(samples);
-			for( int i =0; i<samples; i++){
-				send(fifo[i]>>8);
-				send((uint8_t) fifo[i] & 0xff);
-			}
-			send(0x14);
-			spi_disable = 0;
-		}
-		
+		send(xhi);
+		send(xlo);
+		send(yhi);
+		send(ylo);
+		send(zhi);
+		send(zlo);
+		send(0x14);
 	}
 	
 	if (rcv_char == SET_CONFIG) {
@@ -845,7 +902,6 @@ void process_message(){
 		mkm_release();
 		configured = 0x55;
 		send(0x14);
-		spi_disable = 0;
 	}
 	
 	if (rcv_char == CHK_FAULT) {
@@ -854,20 +910,18 @@ void process_message(){
 		send(fault_value1);
 		send(fault_value2);
 		send(0x14);
-		spi_disable = 0;
 	}
 	
 	if (rcv_char == CHK_TAMP) {
 		rcv_valid = 0;
 		if (tamper_detected == 1) {
 			send(0x15);
-			spi_disable = 0;
 		}
 		else {
 			send(0x14);
-			spi_disable = 0;
 		}
 	}
+	spi_disable = 0;
 }
 
 void send(uint8_t tx){
@@ -897,12 +951,6 @@ void check_usart_faults(){
 	if ((ssp_fault >20) && case_enable) {
 		fault_code = USART;
 		fault_value1 = SSP;
-		fault_value2 = 0x00;
-		tamper_detected = 1;
-	}
-	if (n25_fault >20) {
-		fault_code = USART;
-		fault_value1 = N25;
 		fault_value2 = 0x00;
 		tamper_detected = 1;
 	}

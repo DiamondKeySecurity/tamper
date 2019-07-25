@@ -25,7 +25,7 @@
 #define SSP_IO		0x61  /* three inputs GPA6, GPA5 and GPA0 */
 #define IODIRA		0x00
 #define GPIOA		0x12
-
+#define GPPUA		0x0C
 #define GPINTENA	0x04
 #define INTCONA		0x08
 #define INTCAPA		0x10

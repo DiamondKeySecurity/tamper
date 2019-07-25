@@ -43,13 +43,9 @@ void initTimer2(uint8_t timer)
 
 
 //soft-uart timer
-//ISR (TIMER0_COMPA_vect)
 ISR (TIMER1_COMPA_vect)
 {
 	/*disable interrupts, should we or allow NMI of tamper switch detect? */
-	//cli();
-	//sei();
-	//TCNT0 = 0x00;
 	TCNT1 = 0x00;
 	
 	int i;
@@ -72,14 +68,9 @@ ISR (TIMER1_COMPA_vect)
 				else {
 					rcv_error_stop = 1;
 				}
-				//TIMSK0 &= ~(1<<OCIE0A);		//stop the bit timer
 				TIMSK1 &= ~(1<<OCIE1A);		//stop the bit timer
 				PCMSK1 |= _BV(PCINT11);		//enable start bit detect INT10 to INT11
-				//PCICR |= _BV(PCIE1);
-				//PORTC |= _BV(PORTC6);
 				receiving = 0;
-				//spi_disable = 0;
-				//return;
 			}
 			rcv_bit_count--;
 		}
@@ -100,11 +91,8 @@ ISR (TIMER1_COMPA_vect)
 			}
 			else if (tx_bit_count == 8){
 				PORTB |= _BV(PORTB2);        //send stop bit
-				//TIMSK0 &= ~(1<<OCIE0A);		//stop the bit timer
 				TIMSK1 &= ~(1<<OCIE1A);		//stop the bit timer
 				sending = 0;
-				//spi_disable = 0;
-				//PORTC |= _BV(PORTC6);
 			}
 			tx_bit_count++;
 		}
@@ -124,7 +112,7 @@ ISR (TIMER0_COMPA_vect)
 	
 	TCNT0 = 0x00;
 	int i;
-	PORTC ^= _BV(PORTC6);		//toggle gp6 to check on progress
+	//PORTC ^= _BV(PORTC6);		//toggle gp6 to check on progress
 	TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
 	TIFR0 |= (1<<OCF0A);
 	if (spi_to_flag) {
@@ -138,11 +126,8 @@ ISR (TIMER0_COMPA_vect)
 		if (fifo_delay == 0){
 			fifo_delay_flag = 0;
 		}
-	}
-	if (tamper_delay_flag) {
-		tamper_delay--;
-		if (tamper_delay == 0){
-			tamper_delay_flag = 0;
+		else {
+			TIMSK0 |= (1<<OCIE0A);
 		}
 	}
 	usart_to = 0;

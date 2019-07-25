@@ -131,6 +131,7 @@ void adx_temp(){
 	adx_chip_select(0);
 	temperature = (int32_t)(temp1 | temp2<<8) * 0.065;	
 }
+
 void adx_wr_reg(uint8_t reg, uint8_t value)
 {
 	/* for register setting*/
@@ -156,7 +157,6 @@ uint8_t adx_rd_reg(uint8_t reg){
 uint8_t adx_read_status(){
 	/* ADX status */
 	uint8_t temp;
-	volatile int16_t x, y, z;
 	adx_chip_select(1);
 	USART_Receive(ADX_RD, VIBE);
 	USART_Receive(ADX_STATUS, VIBE);  //device id address 0x00
@@ -166,14 +166,18 @@ uint8_t adx_read_status(){
 	adx_chip_select(1);
 	USART_Receive(ADX_RD, VIBE);
 	USART_Receive(0x0E, VIBE);  //register 0x27
-	x = (int16_t) USART_Receive(0x00, VIBE);		// x-axis LSB
-	x += (int16_t) USART_Receive(0x00, VIBE)<<8;	// x-axis MSB
-	y = (int16_t) USART_Receive(0x00, VIBE);		// y-axis LSB
-	y += (int16_t)USART_Receive(0x00, VIBE)<<8;		// y-axis MSB
-	z = (int16_t)USART_Receive(0x00, VIBE);			// z-axis LSB
-	z += (int16_t) USART_Receive(0x00, VIBE)<<8;	// z-axis MSB
+	xlo = USART_Receive(0x00, VIBE);		// x-axis LSB
+	xhi = USART_Receive(0x00, VIBE);	// x-axis MSB
+	ylo = USART_Receive(0x00, VIBE);		// y-axis LSB
+	yhi = USART_Receive(0x00, VIBE);		// y-axis MSB
+	zlo = USART_Receive(0x00, VIBE);			// z-axis LSB
+	zhi = USART_Receive(0x00, VIBE);	// z-axis MSB
 	adx_chip_select(0);
-	if (abs(x)>vibe_thresh | abs(y) > vibe_thresh | abs(z) > vibe_thresh)
+	x = (uint16_t)xhi<<8 | (uint16_t)xlo;
+	y = (uint16_t)yhi<<8 | (uint16_t)ylo;
+	z = (uint16_t)zhi<<8 | (uint16_t)zlo;
+	//x and y vlaues are static at rest , while z has a constant 1G, at least on earth
+	if (abs(x)>vibe_thresh | abs(y) > vibe_thresh | abs(z) > vibe_thresh + 1000)
 	{
 		temp |= 0x10;
 	}

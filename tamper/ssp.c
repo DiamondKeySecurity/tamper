@@ -49,7 +49,7 @@ spi_usart_setup(int on_flag){
 		/*Enable receiver and transmitter */
 		UCSRB = (1<<RXEN)|(1<<TXEN);
 		/*set baud rate */
-		UBRR = 0x0008;
+		UBRR = 0x0008;  //was 0x0008
 		ssp_chip_select(0);
 		mlx_chip_select(0);
 		adx_chip_select(0);
@@ -79,9 +79,6 @@ reset_fault(uint8_t source){
 		case SSP:
 		ssp_fault = 0;
 		break;
-		case N25:
-		n25_fault = 0;
-		break;
 		default:
 		unk_fault = 0;
 		break;
@@ -93,13 +90,14 @@ uint8_t
 USART_Receive (uint8_t data, uint8_t source)
 {
 	if(!spi_disable){
-		if (source== VIBE){
+		/*if (source== VIBE){
+			
 			UCSRC = (1<<UMSEL1)|(1<<UMSEL0);
 			UCSRC &= ~(1<<UCSZ0);
 		}
 		else {
 			UCSRC = (1<<UMSEL1)|(1<<UMSEL0)|(1<<UCSZ0)|(1<<UCPOL);
-		}
+		}*/
 		//start timer to exit us out
 		//PORTC ^= _BV(PORTC6);
 		spi_to_flag = 1;
@@ -115,7 +113,6 @@ USART_Receive (uint8_t data, uint8_t source)
 		}
 		TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
 		TIFR0 |= (1<<OCF0A);
-		//PORTC ^= _BV(PORTC6);
 		/*put data into buffer, sends data */
 		UDR = data;
 		//start timer to exit us out
@@ -132,7 +129,6 @@ USART_Receive (uint8_t data, uint8_t source)
 		}
 		TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
 		TIFR0 |= (1<<OCF0A);
-		//PORTC ^= _BV(PORTC6);
 		if(spi_to_flag){		//spi comm successful, reset count
 			reset_fault(source);
 		}
@@ -152,9 +148,6 @@ log_fault(uint8_t source){
 		case SSP:
 			ssp_fault++;
 			break;
-		case N25:
-			n25_fault++;
-			break;
 		default:
 			unk_fault++;
 			break;
@@ -172,6 +165,12 @@ ssp_setup()
 	USART_Receive(SSP_IO, SSP);
 	ssp_chip_select(0);
 	
+	ssp_chip_select(1);
+	USART_Receive(SSP_WRITE, SSP);
+	USART_Receive(GPPUA, SSP);
+	USART_Receive(0x21, SSP);
+	ssp_chip_select(0);
+	
 }
 
 void
@@ -184,11 +183,11 @@ ssp_int_config()
 	USART_Receive(INTCONA, SSP);
 	USART_Receive(TAMP_MON, SSP);
 	ssp_chip_select(0);
-	/* set tamper gpio for default value '0' */
+	/* set tamper gpio for default value '1' at TAMP_MON */
 	ssp_chip_select(1);
 	USART_Receive(SSP_WRITE, SSP);
 	USART_Receive(DEFVALA, SSP);
-	USART_Receive(0x00, SSP);
+	USART_Receive(TAMP_MON, SSP);
 	ssp_chip_select(0);
 	//set IOCON INTPOL to 1?
 	ssp_chip_select(1);
@@ -234,7 +233,7 @@ ssp_read_byte()
 	uint8_t temp;
 	ssp_chip_select(1);
 	USART_Receive(SSP_READ, SSP);
-	USART_Receive(INTFA, SSP);
+	USART_Receive(GPIOA, SSP);
 	temp = USART_Receive(0x00, SSP);
 	ssp_chip_select(0);
 	return temp;

@@ -57,10 +57,6 @@ void mlx_get_meas()
 	light =  USART_Receive(0, LIGHT)<<8;
 	light |= USART_Receive(0, LIGHT); 
 	mlx_chip_select(0);
-	//the calibrated temp output
-	//volatile double Numerator = ((11775 + (67 * ((double)calib2 - 32)))) - (double)temp_t;
-   // volatile double*   volatile double T = 30 + (Numerator/Denominator);
-		//temperature = 30 + (double)(((11775 + 67*(calib2-32))-temp_t)/(67+(calib1-16)));
 }
 
 void mlx_setup()
