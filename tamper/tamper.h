@@ -153,6 +153,8 @@ static volatile uint8_t batt_on_cnt;
 static volatile uint8_t temp_flt_cnt;
 static volatile uint8_t light_flt_cnt;
 static volatile uint8_t vibe_flt_cnt;
+static volatile uint8_t ll_flt_cnt;
+static volatile uint8_t case_flt_cnt;
 
 volatile uint8_t rcv[9];
 volatile static uint16_t fifo[30];

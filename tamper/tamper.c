@@ -257,18 +257,26 @@ volatile int i =0;
 /* Interrupt handler for case tamper switches. */
 ISR (INT0_vect)
 {
-	/*disable interrupts until memory is cleared */
+	
 	if(case_enable && configured == 0x55){
-		cli();
-		mkm_wipe();
-		/*TAMP_ON turns on LED and provides falling edge signal to Pi to indicate tamper event */
-		ssp_write(TAMP_ON);
-		ssp_int_reset();   /*read INTFA reg to reset flag*/
-		//To do: now disable case tamper (INT0_vect) interrupt until system is reset
-		EIMSK = 0x00;
-		sei();				/* re-enabling interrupts allows additional tamper trigger or tamper reset */
-		
+		case_flt_cnt++;
+		/* we are doing a "three-strikes" filtering on the triggering of this interrupt, if the tamper ring
+		is truly broken, we will swiftly re-trigger this before the main loop has a chance to clear the count */
+		if(case_flt_cnt>3){ 
+			cli();			/*disable interrupts until memory is cleared */
+			mkm_wipe();
+			//To do: now disable case tamper (INT0_vect) interrupt until system is reset
+			EIMSK = 0x00;
+			sei();				/* re-enabling interrupts allows additional tamper trigger or tamper reset */
+			//also having interrupts disabled while trying ssp commands below was problematic
+			/*TAMP_ON turns on LED and provides falling edge signal to Pi to indicate tamper event */
+			ssp_write(TAMP_ON);
+			ssp_int_reset();   /*read INTFA reg to reset flag*/
+			tamper_detected = 1;
+			fault_code = CASE;
+		}
 	}
+	
 	//sleep_disable();
 }
 #endif
@@ -337,8 +345,7 @@ init_interrupts()
   //PORTC |= (1<<PORTC6);
   //PCMSK2 |= _BV(PCINT22);
   /*setup PB2 as soft-UART RX*/
-  //PUEB = (1<<PUEB3) | (1<<PUEB2);			/*enable internal pull-up to detect start bit */
-  PUEB = (1<<PUEB3);
+  PUEB = (1<<PUEB3);						/*enable internal pull-up to detect start bit */
   //PUEB |= (1<<PUEB2);
   PCMSK1 |= _BV(PCINT11);
  // PCMSK1 |= _BV(PCINT10);
@@ -375,7 +382,7 @@ init_tamper_values(uint8_t flags_set, uint8_t source)
 	}
 	if (flags & CASE) {
 		case_enable = 1;
-		init_int0();		/*enable INT0 */
+		
 	}
 	else{
 		case_enable = 0;
@@ -483,6 +490,8 @@ main()
   temp_flt_cnt = 0;
   light_flt_cnt = 0;
   vibe_flt_cnt = 0;
+  ll_flt_cnt = 0;
+  case_flt_cnt = 0;
   PORTB |= _BV(PORTB3);   //set RX idle high
   PORTB |= _BV(PORTB2);   //set TX idle high
   wd_init = 0x01;
@@ -593,8 +602,14 @@ main()
 			}
 			//detect when low line (VBat <= 2.6VDC)
 			if (!(ssp_status & 0x01)) {
-				tamper_detected = 1;
-				fault_code = LL;
+				ll_flt_cnt++;
+				if(ll_flt_cnt >10){
+					tamper_detected = 1;
+					fault_code = LL;
+				}
+			}
+			else {
+				ll_flt_cnt = 0;
 			}
 			if (batt_on){
 				//re-purpose timer0 and set a throttle timer
@@ -604,11 +619,11 @@ main()
 				fifo_delay = 50;
 				TCNT0 = 0x00;
 				TIMSK0 |= (1<<OCIE0A);
-				while (fifo_delay_flag){};
+				while (fifo_delay_flag){TIMSK0 |= (1<<OCIE0A);};
 				TIMSK0 &= ~(1<<OCIE0A);		//stop the  timer
 				TIFR0 |= (1<<OCF0A);
 				OCR0A = 185;
-				AVR_LED_PORT &= ~_BV(AVR_LED_YELLOW_BIT);
+				//AVR_LED_PORT &= ~_BV(AVR_LED_YELLOW_BIT);
 				mkm_grab();
 			}
 			else {
@@ -681,6 +696,7 @@ main()
 					light_flt_cnt = 0;
 				}
 			}
+			case_flt_cnt = 0; //clear any detection of glitches in tamper ring
 			//if (panic_p())
 			//mkm_wipe();
 			//sleep_enable();
@@ -821,6 +837,7 @@ void process_message(){
 			send(0x14);
 			init_tamper_values(flags, 0);
 			tamper_detected = 0;
+			AVR_LED_PORT &= ~_BV(AVR_LED_GREEN_BIT);
 			mkm_release();
 		}
 	}
@@ -840,6 +857,7 @@ void process_message(){
 			send(0x14);
 			init_tamper_values(flags, 0);
 			tamper_detected = 0;
+			AVR_LED_PORT &= ~_BV(AVR_LED_GREEN_BIT);
 			mkm_release();
 		}
 	}
@@ -901,6 +919,9 @@ void process_message(){
 		rcv_valid = 0;
 		mkm_release();
 		configured = 0x55;
+		if(case_enable){
+			init_int0();		/*enable INT0 , moved from enable config to allow configured to be set before looking for int*/
+		}
 		send(0x14);
 	}
 	
