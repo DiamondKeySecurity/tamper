@@ -77,7 +77,9 @@ reset_fault(uint8_t source){
 		vibe_fault = 0;
 		break;
 		case SSP:
-		ssp_fault = 0;
+		if(ssp_fault>0){
+			ssp_fault--;
+		}
 		break;
 		default:
 		unk_fault = 0;
@@ -133,6 +135,9 @@ USART_Receive (uint8_t data, uint8_t source)
 			reset_fault(source);
 		}
 	}
+	else{
+		spi_disabled = 1;
+	}
 	return UDR;
 }
 
@@ -147,6 +152,7 @@ log_fault(uint8_t source){
 			break;
 		case SSP:
 			ssp_fault++;
+			ssp_fault_max++;
 			break;
 		default:
 			unk_fault++;

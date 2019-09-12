@@ -67,6 +67,7 @@ ISR (TIMER1_COMPA_vect)
 				}
 				else {
 					rcv_error_stop = 1;
+					spi_disable = 0;
 				}
 				TIMSK1 &= ~(1<<OCIE1A);		//stop the bit timer
 				PCMSK1 |= _BV(PCINT11);		//enable start bit detect INT10 to INT11
@@ -93,6 +94,7 @@ ISR (TIMER1_COMPA_vect)
 				PORTB |= _BV(PORTB2);        //send stop bit
 				TIMSK1 &= ~(1<<OCIE1A);		//stop the bit timer
 				sending = 0;
+				spi_disable = 0;
 			}
 			tx_bit_count++;
 		}

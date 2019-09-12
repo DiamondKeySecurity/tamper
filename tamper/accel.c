@@ -121,15 +121,29 @@ void adx_setup(){
 	adx_chip_select(0);
 }
 void adx_temp(){
-	uint8_t temp1, temp2;
+	uint8_t temp, temp1, temp2;
 	adx_chip_select(1);
 	USART_Receive(ADX_RD, VIBE);
-	USART_Receive(0x14, VIBE);
-	temp1 = USART_Receive(0x00, VIBE);//dummy byte to read in register
-	temp2 = USART_Receive(0x00, VIBE);//dummy byte to read in register
-	
+	USART_Receive(ADX_STATUS, VIBE);  //device id address 0x00
+	temp = USART_Receive(0x00, VIBE);
+	//temp = USART_Receive(0x00, VIBE);
 	adx_chip_select(0);
-	temperature = (int32_t)(temp1 | temp2<<8) * 0.065;	
+	if(!(temp & ADX_ERR)){
+		adx_chip_select(1);
+		USART_Receive(ADX_RD, VIBE);
+		USART_Receive(0x14, VIBE);
+		temp1 = USART_Receive(0x00, VIBE);//dummy byte to read in register
+		temp2 = USART_Receive(0x00, VIBE);//dummy byte to read in register
+	
+		adx_chip_select(0);
+		
+		temperature = (int32_t)(temp1 | (temp2 & 0x87)<<8) * 0.065;
+	}
+	else {
+		vibe_fault_reset++;
+		adx_soft_r();
+		adx_setup();
+	}
 }
 
 void adx_wr_reg(uint8_t reg, uint8_t value)
@@ -163,6 +177,11 @@ uint8_t adx_read_status(){
 	temp = USART_Receive(0x00, VIBE);
 	//temp = USART_Receive(0x00, VIBE);
     adx_chip_select(0);
+	if((temp & ADX_ERR)){
+		vibe_fault_reset++;
+		adx_soft_r();
+		adx_setup();
+	} else {
 	adx_chip_select(1);
 	USART_Receive(ADX_RD, VIBE);
 	USART_Receive(0x0E, VIBE);  //register 0x27
@@ -176,14 +195,13 @@ uint8_t adx_read_status(){
 	x = (uint16_t)xhi<<8 | (uint16_t)xlo;
 	y = (uint16_t)yhi<<8 | (uint16_t)ylo;
 	z = (uint16_t)zhi<<8 | (uint16_t)zlo;
-	//x and y vlaues are static at rest , while z has a constant 1G, at least on earth
+	//x and y values are static at rest , while z has a constant 1G, at least on earth
 	if (abs(x)>vibe_thresh | abs(y) > vibe_thresh | abs(z) > vibe_thresh + 1000)
 	{
 		temp |= 0x10;
+		
 	}
-	
-
-
+	}
 	return temp;
 }
 
